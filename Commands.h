@@ -69,7 +69,10 @@ private:
   string prompt;
 
 public:
-  chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid){};
+  chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
+  {
+    prompt = args.size() > 1 ? args[1] : string("smash");
+  };
   virtual ~chpromptCommand(){};
   void execute() override;
 };

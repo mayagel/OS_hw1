@@ -164,3 +164,8 @@ void SmallShell::executeCommand(const char *cmd_line)
   cmd->execute();
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
+
+void chpromptCommand::execute()
+{
+  SmallShell::getInstance().setPrompt(this->prompt);
+}
