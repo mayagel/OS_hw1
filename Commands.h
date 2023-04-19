@@ -19,7 +19,7 @@ class Command
 
 public:
   Command(string cmd_line, vector<string> args, pid_t pid = -1) : cmd_str(cmd_line), args(args), pid(pid){};
-  virtual ~Command();
+  virtual ~Command() = 0;
   virtual void execute() = 0;
   std::string getCmdStr() { cmd_str; };
   pid_t getPid() { pid; }
@@ -32,7 +32,7 @@ class BuiltInCommand : public Command
 {
 public:
   BuiltInCommand(string cmd_line, vector<string> args, pid_t pid = -1) : Command(cmd_line, args, pid){};
-  virtual ~BuiltInCommand() {}
+  virtual ~BuiltInCommand() = 0;
 };
 
 class ExternalCommand : public Command
@@ -70,7 +70,7 @@ private:
 
 public:
   chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid){};
-  virtual ~chpromptCommand(){};
+  virtual ~chpromptCommand() = default;
   void execute() override;
 };
 
