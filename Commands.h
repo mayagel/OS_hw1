@@ -19,7 +19,7 @@ class Command
 
 public:
   Command(string cmd_line, vector<string> args, pid_t pid = -1) : cmd_str(cmd_line), args(args), pid(pid){};
-  virtual ~Command() = 0;
+  virtual ~Command(){};
   virtual void execute() = 0;
   std::string getCmdStr() { cmd_str; };
   pid_t getPid() { pid; }
@@ -32,7 +32,7 @@ class BuiltInCommand : public Command
 {
 public:
   BuiltInCommand(string cmd_line, vector<string> args, pid_t pid = -1) : Command(cmd_line, args, pid){};
-  virtual ~BuiltInCommand() = 0;
+  virtual ~BuiltInCommand() {}
 };
 
 class ExternalCommand : public Command
@@ -70,7 +70,7 @@ private:
 
 public:
   chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid){};
-  virtual ~chpromptCommand() = default;
+  virtual ~chpromptCommand(){};
   void execute() override;
 };
 
@@ -223,7 +223,10 @@ public:
     return instance;
   }
   std::string getPrompt(){};
-  void SmallShell::setPrompt(std::string new_smash_name = string("smash")) { smash_name = new_smash_name; };
+  void setPrompt(std::string new_smash_name = string("smash"))
+  {
+    smash_name = new_smash_name;
+  };
   ~SmallShell();
   void executeCommand(const char *cmd_line);
   // TODO: add extra methods as needed
