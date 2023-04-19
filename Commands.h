@@ -7,6 +7,10 @@
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
 
+using std::endl;
+using std::string;
+using std::vector;
+
 class Command
 {
   std::string cmd_str; // without changes
@@ -219,7 +223,7 @@ public:
     return instance;
   }
   std::string getPrompt(){};
-  void SmallShell::setPrompt(std::string new_smash_name = "smash") { smash_name = new_smash_name; };
+  void SmallShell::setPrompt(std::string new_smash_name = string("smash")) { smash_name = new_smash_name; };
   ~SmallShell();
   void executeCommand(const char *cmd_line);
   // TODO: add extra methods as needed
