@@ -226,7 +226,7 @@ public:
     instance.setPrompt();
     return instance;
   }
-  std::string getPrompt(){};
+  std::string getPrompt() { return smash_name; };
   void setPrompt(std::string new_smash_name = string("smash"))
   {
     smash_name = new_smash_name;

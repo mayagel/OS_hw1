@@ -7,6 +7,7 @@
 
 int main(int argc, char *argv[])
 {
+    std::cout << "start function";
     if (signal(SIGTSTP, ctrlZHandler) == SIG_ERR)
     {
         perror("smash error: failed to set ctrl-Z handler");
