@@ -150,13 +150,15 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     return nullptr;
   }
   string last_arg = args.back();
-
+  args.erase(args.end() - 1);
   if (_isBackgroundComamnd(last_arg))
   {
     cout << "found &!!!\n";
-    last_arg.pop_back();
+    _removeBackgroundSign(last_arg);
     cout << "delete &\n\n\n";
+    cout << "now last arg is: " << string(last_arg);
   }
+  args.push_back(last_arg);
   // args.push_back(last_arg);
   //  string fix_cmd = org_cmd;
   //  _removeBackgroundSign(org_cmd); // maybe delete whitespace at the end
