@@ -198,6 +198,11 @@ void ShowPidCommand::execute()
   cout << "smash pid is " << SmallShell::getInstance().getPidSmash() << endl;
   // SmallShell::getInstance().setPrompt(this->prompt);
 }
+void GetCurrDirCommand::execute()
+{
+  cout << "in execute pwd" << endl;
+  // SmallShell::getInstance().setPrompt(this->prompt);
+}
 // GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
 // {
 //   // if (!getcwd())
