@@ -91,7 +91,7 @@ class GetCurrDirCommand : public BuiltInCommand
 public:
   GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
   {
-    cout << getcwd(NULL, 0) << endl;
+    std::cout << getcwd(NULL, 0) << endl;
   };
   GetCurrDirCommand(const char *cmd_line);
   virtual ~GetCurrDirCommand() {}
