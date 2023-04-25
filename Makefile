@@ -6,7 +6,6 @@ SRCS := Commands.cpp signals.cpp smash.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 HDRS := Commands.h signals.h
 TESTS_INPUTS := $(wildcard test_input*.txt)
-TESTS_OUTPUTS := $(subst input,output,$(TESTS_INPUTS))
 SMASH_BIN := smash
 
 $(SMASH_BIN): $(OBJS)
@@ -19,5 +18,5 @@ zip: $(SRCS) $(HDRS)
 	zip $(SUBMITTERS).zip $^ submitters.txt Makefile
 
 clean:
-	rm -rf $(SMASH_BIN) $(OBJS) $(TESTS_OUTPUTS) 
+	rm -rf $(SMASH_BIN) $(OBJS)
 	rm -rf $(SUBMITTERS).zip
