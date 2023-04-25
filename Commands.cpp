@@ -191,6 +191,6 @@ void chpromptCommand::execute()
 void ShowPidCommand::execute()
 {
 
-  cout << "the smash pid is: ", long(SmallShell::getInstance().getPidSmash());
+  cout << "the smash pid is: " << long(SmallShell::getInstance().getPidSmash()) << endl;
   // SmallShell::getInstance().setPrompt(this->prompt);
 }
