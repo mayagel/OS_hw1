@@ -102,7 +102,7 @@ private:
 public:
   ShowPidCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
   {
-    cout << "in constructor shotpidcommand\n";
+    std::cout << "in constructor shotpidcommand\n";
     // smash_pid = SmallShell::getInstance().getPidSmash();
   };
   ShowPidCommand(const char *cmd_line);
