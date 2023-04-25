@@ -175,7 +175,43 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new GetCurrDirCommand(org_cmd, args);
   }
-
+  else if (args[0] == "cd")
+  {
+    return new ChangeDirCommand(org_cmd, args);
+  }
+  else if (args[0] == "jobs")
+  {
+    return new JobsCommand(org_cmd, args);
+  }
+  else if (args[0] == "fg")
+  {
+    return new ForegroundCommand(org_cmd, args);
+  }
+  else if (args[0] == "bg")
+  {
+    return new BackgroundCommand(org_cmd, args);
+  }
+  else if (args[0] == "quit")
+  {
+    return new QuitCommand(org_cmd, args);
+  }
+  else if (args[0] == "kill")
+  {
+    return new KillCommand(org_cmd, args);
+  }
+  // else if (args[0] == "setcore")
+  // {
+  //   return new SetcoreCommand(org_cmd, args);
+  // }
+  else
+  {
+    cout << "external commands";
+    // if (inBackground)
+    // {
+    //   cmd += "&";
+    // }
+    // return new ExternalCommand(cmd_without_changes, cmd, args, inBackground);
+  }
   return nullptr;
 }
 
@@ -188,6 +224,42 @@ void SmallShell::executeCommand(const char *cmd_line)
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
+/************** !!!!constructors!!!! ******************/
+GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  // if (!getcwd())
+  // {
+  //   return nullptr;
+  // }
+  pwd = getcwd(NULL, 0);
+  // cout << getcwd(NULL, 0) << endl;
+}
+ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  cout << "in change dir command";
+}
+JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  cout << "in JobsCommand command";
+}
+ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  cout << "in ForegroundCommand command";
+}
+BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  cout << "in BackgroundCommand command";
+}
+QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  cout << "in QuitCommand command";
+}
+KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  cout << "in KillCommand command";
+}
+
+/************** !!!!executes!!!! ******************/
 void chpromptCommand::execute()
 {
   SmallShell::getInstance().setPrompt(this->prompt);
@@ -203,12 +275,21 @@ void GetCurrDirCommand::execute()
   cout << pwd << endl;
   // SmallShell::getInstance().setPrompt(this->prompt);
 }
-GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+void ChangeDirCommand::execute()
 {
-  // if (!getcwd())
-  // {
-  //   return nullptr;
-  // }
-  pwd = getcwd(NULL, 0);
-  // cout << getcwd(NULL, 0) << endl;
+}
+void JobsCommand::execute()
+{
+}
+void ForegroundCommand::execute()
+{
+}
+void BackgroundCommand::execute()
+{
+}
+void QuitCommand::execute()
+{
+}
+void KillCommand::execute()
+{
 }

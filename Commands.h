@@ -81,6 +81,7 @@ public:
 class ChangeDirCommand : public BuiltInCommand
 {
   // TODO: Add your data members public:
+  ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   ChangeDirCommand(const char *cmd_line, char **plastPwd);
   virtual ~ChangeDirCommand() {}
   void execute() override;
@@ -114,12 +115,15 @@ public:
   void execute() override;
 };
 
-class JobsList;
+class JobsList
+{
+};
 
 class QuitCommand : public BuiltInCommand
 {
   // TODO: Add your data members
 public:
+  QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   QuitCommand(const char *cmd_line, JobsList *jobs);
   virtual ~QuitCommand() {}
   void execute() override;
@@ -151,6 +155,7 @@ class JobsCommand : public BuiltInCommand
 {
   // TODO: Add your data members
 public:
+  JobsCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   JobsCommand(const char *cmd_line, JobsList *jobs);
   virtual ~JobsCommand() {}
   void execute() override;
@@ -160,6 +165,7 @@ class ForegroundCommand : public BuiltInCommand
 {
   // TODO: Add your data members
 public:
+  ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   ForegroundCommand(const char *cmd_line, JobsList *jobs);
   virtual ~ForegroundCommand() {}
   void execute() override;
@@ -169,6 +175,7 @@ class BackgroundCommand : public BuiltInCommand
 {
   // TODO: Add your data members
 public:
+  BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   BackgroundCommand(const char *cmd_line, JobsList *jobs);
   virtual ~BackgroundCommand() {}
   void execute() override;
@@ -215,6 +222,7 @@ class KillCommand : public BuiltInCommand
 {
   // TODO: Add your data members
 public:
+  KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   KillCommand(const char *cmd_line, JobsList *jobs);
   virtual ~KillCommand() {}
   void execute() override;
