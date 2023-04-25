@@ -89,7 +89,7 @@ class ChangeDirCommand : public BuiltInCommand
 class GetCurrDirCommand : public BuiltInCommand
 {
 public:
-  GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid = -1);
+  GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid);
   GetCurrDirCommand(const char *cmd_line);
   virtual ~GetCurrDirCommand() {}
   void execute() override;
