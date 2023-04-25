@@ -117,10 +117,6 @@ public:
   void execute() override;
 };
 
-class JobsList
-{
-};
-
 class QuitCommand : public BuiltInCommand
 {
   // TODO: Add your data members
