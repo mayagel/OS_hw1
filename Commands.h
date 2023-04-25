@@ -123,7 +123,7 @@ class QuitCommand : public BuiltInCommand
 {
   // TODO: Add your data members
 public:
-  QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid = -1);
+  QuitCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   QuitCommand(const char *cmd_line, JobsList *jobs);
   virtual ~QuitCommand() {}
   void execute() override;
