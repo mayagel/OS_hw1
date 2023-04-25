@@ -200,15 +200,15 @@ void ShowPidCommand::execute()
 }
 void GetCurrDirCommand::execute()
 {
-  cout << "in execute pwd" << endl;
+  cout << pwd << endl;
   // SmallShell::getInstance().setPrompt(this->prompt);
 }
-// GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
-// {
-//   // if (!getcwd())
-//   // {
-//   //   return nullptr;
-//   // }
-
-//   cout << getcwd(NULL, 0) << endl;
-// }
+GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
+{
+  // if (!getcwd())
+  // {
+  //   return nullptr;
+  // }
+  pwd = getcwd(NULL, 0);
+  // cout << getcwd(NULL, 0) << endl;
+}
