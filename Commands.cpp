@@ -154,9 +154,9 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   if (_isBackgroundComamnd(last_arg))
   {
     cout << "found &!!!\n";
-    _removeBackgroundSign(last_arg);
+    last_arg.pop_back();
     cout << "delete &\n\n\n";
-    cout << "now last arg is: " << string(last_arg);
+    cout << "now last arg is: " << string(last_arg) << endl;
   }
   args.push_back(last_arg);
   // args.push_back(last_arg);
