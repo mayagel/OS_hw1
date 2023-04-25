@@ -92,7 +92,7 @@ private:
   string pwd;
 
 public:
-  GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid);
+  GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   GetCurrDirCommand(const char *cmd_line);
   virtual ~GetCurrDirCommand() {}
   void execute() override;
