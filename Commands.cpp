@@ -167,7 +167,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new chpromptCommand(org_cmd, args);
   }
-  else if (args[0] == "chprompt")
+  else if (args[0] == "showpid")
   {
     return new ShowPidCommand(org_cmd, args);
   }
