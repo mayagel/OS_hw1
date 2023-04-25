@@ -7,26 +7,26 @@
 
 int main(int argc, char *argv[])
 {
-    std::cout << "start function";
+    std::cout << "start function\n";
     if (signal(SIGTSTP, ctrlZHandler) == SIG_ERR)
     {
-        perror("smash error: failed to set ctrl-Z handler");
+        perror("smash error: failed to set ctrl-Z handler!!!!!!!\n");
     }
     if (signal(SIGINT, ctrlCHandler) == SIG_ERR)
     {
-        perror("smash error: failed to set ctrl-C handler");
+        perror("smash error: failed to set ctrl-C handler\n");
     }
     std::cout << "after signals";
     // TODO: setup sig alarm handler
 
     SmallShell &smash = SmallShell::getInstance();
-    std::cout << "after creating smash";
+    std::cout << "after creating smash\n";
     while (true)
     {
-        std::cout << "inside while";
+        std::cout << "inside while\n";
 
         std::cout << smash.getPrompt() << "> ";
-        std::cout << "after printing 'smash >'";
+        std::cout << "after printing 'smash >'\n";
 
         std::string cmd_line;
         std::getline(std::cin, cmd_line);
