@@ -2,6 +2,7 @@
 #define SMASH_COMMAND_H_
 
 #include <vector>
+#include <map>
 #include <string>
 #include <iostream>
 
@@ -9,6 +10,7 @@
 #define COMMAND_MAX_ARGS (20)
 
 using std::endl;
+using std::map;
 using std::string;
 using std::vector;
 
@@ -135,7 +137,23 @@ public:
   class JobEntry
   {
     // TODO: Add your data members
+    // int _job_id;
+    bool isStopped;
+    time_t start_time;
+    Command *cmd;
+
+  public:
+    JobEntry(int job_id, bool isStopped, Command *cmd);
+    // int getJobId() const { return _job_id; }
+    pid_t getPid() const { return cmd->getPid(); }
+    string getCommand() const { return cmd->getCmdStr(); }
+    Command *getCmd() { return cmd; }
+    void setCmd(Command *cmd) { cmd = cmd; }
+    bool isStopped() const { return isStopped; }
+    void setStopped(bool newisStopped) { isStopped = newisStopped; }
+    time_t getStartTime() const { return start_time; }
   };
+  map<int, JobEntry> jbs_map;
   // TODO: Add your data members
 public:
   JobsList();
@@ -237,6 +255,7 @@ private:
 
 public:
   Command *CreateCommand(const char *cmd_line);
+  void printJobsList();
   pid_t getPidSmash() { return getpid(); };
   SmallShell(SmallShell const &) = delete;     // disable copy ctor
   void operator=(SmallShell const &) = delete; // disable = operator

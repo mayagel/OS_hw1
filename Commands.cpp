@@ -125,6 +125,8 @@ void _removeBackgroundSign(string &cmd_line)
 
 // TODO: Add your implementation for classes in Commands.h
 
+/************** !!!!SmallShell implements!!!! ******************/
+
 SmallShell::SmallShell()
 {
   // TODO: add your implementation
@@ -153,10 +155,10 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   args.erase(args.end() - 1);
   if (_isBackgroundComamnd(last_arg))
   {
-    cout << "found &!!!\n";
+    // cout << "found &!!!\n";
     last_arg.pop_back();
-    cout << "delete &\n\n\n";
-    cout << "now last arg is: " << string(last_arg) << endl;
+    // cout << "delete &\n\n\n";
+    // cout << "now last arg is: " << string(last_arg) << endl;
   }
   args.push_back(last_arg);
   // args.push_back(last_arg);
@@ -224,6 +226,10 @@ void SmallShell::executeCommand(const char *cmd_line)
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
+void SmallShell::printJobsList()
+{
+}
+
 /************** !!!!constructors!!!! ******************/
 GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -236,7 +242,6 @@ GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t
 }
 ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-
   chdir(args[1].c_str()); // maybe need pay attention to leak
   // handeling error at the ends!
 }
@@ -282,6 +287,7 @@ void ChangeDirCommand::execute()
 }
 void JobsCommand::execute()
 {
+  SmallShell::getInstance().printJobsList();
 }
 void ForegroundCommand::execute()
 {
@@ -294,4 +300,39 @@ void QuitCommand::execute()
 }
 void KillCommand::execute()
 {
+}
+
+/************** !!!!other-implements!!!! ******************/
+
+void JobsList::removeFinishedJobs()
+{
+  for (auto &[key, job] : jbs_map)
+  {
+
+    auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
+    if (wait_stat == -1)
+    {
+      perror("smash error: waitpid failed");
+    }
+    else if (wait_stat != 0)
+    {
+      jbs_map.erase(key);
+    }
+  }
+}
+
+void JobsList::printJobsList()
+{
+  removeFinishedJobs();
+  for (auto &[key, job] : jbs_map)
+  {
+    time_t now = time(NULL);
+    // int seconds = difftime(now, job.getStartTime());
+    cout << "[" << key << "] " << job.getCommand() << " : " << job.getPid() << " " << int(difftime(now, job.getStartTime())) << " secs";
+    if (job.isStopped())
+    {
+      cout << " (stopped)";
+    }
+    cout << endl;
+  }
 }
