@@ -171,6 +171,10 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new ShowPidCommand(org_cmd, args);
   }
+  else if (args[0] == "pwd")
+  {
+    return new GetCurrDirCommand(org_cmd, args);
+  }
 
   return nullptr;
 }
