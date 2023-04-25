@@ -203,7 +203,7 @@ void GetCurrDirCommand::execute()
   cout << pwd << endl;
   // SmallShell::getInstance().setPrompt(this->prompt);
 }
-GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
+GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   // if (!getcwd())
   // {
