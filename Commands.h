@@ -80,6 +80,8 @@ public:
 
 class ChangeDirCommand : public BuiltInCommand
 {
+private:
+public:
   // TODO: Add your data members public:
   ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   ChangeDirCommand(const char *cmd_line, char **plastPwd);
