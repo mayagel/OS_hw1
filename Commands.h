@@ -138,19 +138,19 @@ public:
   {
     // TODO: Add your data members
     // int _job_id;
-    bool isStopped;
+    bool is_stopped;
     time_t start_time;
     Command *cmd;
 
   public:
-    JobEntry(int job_id, bool isStopped, Command *cmd);
+    JobEntry(int job_id, bool is_stopped, Command *cmd);
     // int getJobId() const { return _job_id; }
     pid_t getPid() const { return cmd->getPid(); }
     string getCommand() const { return cmd->getCmdStr(); }
     Command *getCmd() { return cmd; }
     void setCmd(Command *cmd) { cmd = cmd; }
-    bool isStopped() const { return isStopped; }
-    void setStopped(bool newisStopped) { isStopped = newisStopped; }
+    bool isStopped() const { return is_stopped; }
+    void setStopped(bool new_is_stopped) { is_stopped = new_is_stopped; }
     time_t getStartTime() const { return start_time; }
   };
   map<int, JobEntry> jbs_map;
