@@ -236,7 +236,9 @@ GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t
 }
 ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in change dir command";
+
+  chdir(args[1].c_str()); // maybe need pay attention to leak
+  // handeling error at the ends!
 }
 JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
