@@ -143,16 +143,31 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   if (!cmd_line)
     return nullptr;
   string org_cmd = string(cmd_line);
-  // string fix_cmd = org_cmd;
-  // _removeBackgroundSign(org_cmd); // maybe delete whitespace at the end
+
   vector<string> args;
-  _parseCommandLine(org_cmd, args);
-  if (args.empty())
+  if (!_parseCommandLine(org_cmd, args))
+  {
     return nullptr;
+  }
+  string last_arg = args.back();
+
+  if (_isBackgroundComamnd(last_arg))
+  {
+    _removeBackgroundSign(last_arg);
+  }
+  // args.push_back(last_arg);
+  //  string fix_cmd = org_cmd;
+  //  _removeBackgroundSign(org_cmd); // maybe delete whitespace at the end
+
   if (args[0] == "chprompt")
   {
     return new chpromptCommand(org_cmd, args);
   }
+  else if (0 == 0)
+  {
+    /* code */
+  }
+
   return nullptr;
 }
 

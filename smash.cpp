@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
         std::cout << "inside while\n";
 
         std::cout << smash.getPrompt() << "> ";
-        std::cout << "after printing 'smash >'\n";
-
         std::string cmd_line;
         std::getline(std::cin, cmd_line);
         smash.executeCommand(cmd_line.c_str());
