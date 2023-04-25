@@ -96,7 +96,14 @@ public:
 
 class ShowPidCommand : public BuiltInCommand
 {
+private:
+  pid_t smash_pid;
+
 public:
+  ShowPidCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
+  {
+    smash_pid = SmallShell::getInstance().getPidSmash();
+  };
   ShowPidCommand(const char *cmd_line);
   virtual ~ShowPidCommand() {}
   void execute() override;
@@ -217,6 +224,7 @@ private:
 
 public:
   Command *CreateCommand(const char *cmd_line);
+  pid_t getPidSmash() { return getpid(); };
   SmallShell(SmallShell const &) = delete;     // disable copy ctor
   void operator=(SmallShell const &) = delete; // disable = operator
   static SmallShell &getInstance()             // make SmallShell singleton

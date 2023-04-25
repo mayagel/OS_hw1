@@ -167,9 +167,9 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new chpromptCommand(org_cmd, args);
   }
-  else if (0 == 0)
+  else if (args[0] == "chprompt")
   {
-    /* code */
+    return new ShowPidCommand(org_cmd, args);
   }
 
   return nullptr;
@@ -187,4 +187,9 @@ void SmallShell::executeCommand(const char *cmd_line)
 void chpromptCommand::execute()
 {
   SmallShell::getInstance().setPrompt(this->prompt);
+}
+void ShowPidCommand::execute()
+{
+  cout << "the smash pid is: ", smash_pid;
+  // SmallShell::getInstance().setPrompt(this->prompt);
 }
