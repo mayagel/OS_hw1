@@ -250,12 +250,13 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
+  JobsList jobs_list;
   std::string smash_name;
   SmallShell();
 
 public:
   Command *CreateCommand(const char *cmd_line);
-  void printJobsList();
+  void printJobs();
   pid_t getPidSmash() { return getpid(); };
   SmallShell(SmallShell const &) = delete;     // disable copy ctor
   void operator=(SmallShell const &) = delete; // disable = operator

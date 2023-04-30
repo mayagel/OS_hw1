@@ -226,8 +226,9 @@ void SmallShell::executeCommand(const char *cmd_line)
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
-void SmallShell::printJobsList()
+void SmallShell::printJobs()
 {
+  jobs_list.printJobsList();
 }
 
 /************** !!!!constructors!!!! ******************/
@@ -287,7 +288,9 @@ void ChangeDirCommand::execute()
 }
 void JobsCommand::execute()
 {
-  SmallShell::getInstance().printJobsList();
+  cout << "in JobsCommand::execute\n";
+
+  SmallShell::getInstance().printJobs();
 }
 void ForegroundCommand::execute()
 {
@@ -306,6 +309,7 @@ void KillCommand::execute()
 
 void JobsList::removeFinishedJobs()
 {
+  cout << "in JobsList::removeFinishedJobs\n";
   for (auto &[key, job] : jbs_map)
   {
 
@@ -323,6 +327,7 @@ void JobsList::removeFinishedJobs()
 
 void JobsList::printJobsList()
 {
+  cout << "in JobsList::printJobsList\n";
   removeFinishedJobs();
   for (auto &[key, job] : jbs_map)
   {
