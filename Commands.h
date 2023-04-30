@@ -157,7 +157,7 @@ public:
   // TODO: Add your data members
 public:
   JobsList();
-  ~JobsList(){};
+  ~JobsList() = default;
   void addJob(Command *cmd, bool isStopped = false);
   void printJobsList();
   void killAllJobs();
@@ -256,7 +256,7 @@ private:
 
 public:
   Command *CreateCommand(const char *cmd_line);
-  void printJobsList();
+  void printJobs();
   pid_t getPidSmash() { return getpid(); };
   SmallShell(SmallShell const &) = delete;     // disable copy ctor
   void operator=(SmallShell const &) = delete; // disable = operator
