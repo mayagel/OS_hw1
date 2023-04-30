@@ -287,7 +287,7 @@ void ChangeDirCommand::execute()
 }
 void JobsCommand::execute()
 {
-  SmallShell::getInstance().printJobsList();
+  SmallShell::getInstance().printJobs();
 }
 void ForegroundCommand::execute()
 {
