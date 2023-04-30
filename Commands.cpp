@@ -127,7 +127,7 @@ void _removeBackgroundSign(string &cmd_line)
 
 /************** !!!!SmallShell implements!!!! ******************/
 
-SmallShell::SmallShell() : smash_name("smash")
+SmallShell::SmallShell()
 {
   // TODO: add your implementation
 }
