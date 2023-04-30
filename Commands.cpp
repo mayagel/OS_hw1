@@ -296,6 +296,8 @@ void JobsCommand::execute()
 }
 void ForegroundCommand::execute()
 {
+  cout << "in ForegroundCommand execute" << endl;
+  cout << "job id is: " << job_id << endl;
   cout << job->getCommand() << " : " << job->getPid() << endl;
   // SmallShell::getInstance().getJobs().getJobById(job_id).setIsStopped(false);
 }
