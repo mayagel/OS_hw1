@@ -250,8 +250,9 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
-  JobsList jobs_list;
   std::string smash_name;
+
+  JobsList jobs_list;
   SmallShell();
 
 public:
