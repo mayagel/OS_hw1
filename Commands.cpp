@@ -336,3 +336,7 @@ void JobsList::printJobsList()
     cout << endl;
   }
 }
+
+JobsList::JobsList() : jbs_map()
+{
+}
