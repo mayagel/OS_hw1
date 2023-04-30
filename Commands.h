@@ -250,7 +250,7 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
-  // JobsList jbs_list;
+  JobsList jbs_list;
   std::string smash_name;
   SmallShell();
 
@@ -264,7 +264,7 @@ public:
   {
     static SmallShell instance; // Guaranteed to be destroyed.
     // Instantiated on first use.
-    instance.setPrompt();
+    // instance.setPrompt();
     return instance;
   }
   std::string getPrompt() { return smash_name; };
