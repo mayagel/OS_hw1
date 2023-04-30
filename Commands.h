@@ -157,7 +157,7 @@ public:
   // TODO: Add your data members
 public:
   JobsList();
-  ~JobsList() = default;
+  ~JobsList();
   void addJob(Command *cmd, bool isStopped = false);
   void printJobsList();
   void killAllJobs();
@@ -250,13 +250,12 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
-  JobsList jobs_list;
   std::string smash_name;
   SmallShell();
 
 public:
   Command *CreateCommand(const char *cmd_line);
-  void printJobs();
+  void printJobsList();
   pid_t getPidSmash() { return getpid(); };
   SmallShell(SmallShell const &) = delete;     // disable copy ctor
   void operator=(SmallShell const &) = delete; // disable = operator

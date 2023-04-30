@@ -129,7 +129,7 @@ void _removeBackgroundSign(string &cmd_line)
 
 SmallShell::SmallShell()
 {
-  // add impl if need
+  // TODO: add your implementation
 }
 
 SmallShell::~SmallShell()
@@ -226,9 +226,8 @@ void SmallShell::executeCommand(const char *cmd_line)
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
-void SmallShell::printJobs()
+void SmallShell::printJobsList()
 {
-  jobs_list.printJobsList();
 }
 
 /************** !!!!constructors!!!! ******************/
@@ -288,9 +287,7 @@ void ChangeDirCommand::execute()
 }
 void JobsCommand::execute()
 {
-  cout << "in JobsCommand::execute\n";
-
-  SmallShell::getInstance().printJobs();
+  SmallShell::getInstance().printJobsList();
 }
 void ForegroundCommand::execute()
 {
@@ -309,7 +306,6 @@ void KillCommand::execute()
 
 void JobsList::removeFinishedJobs()
 {
-  cout << "in JobsList::removeFinishedJobs\n";
   for (auto &[key, job] : jbs_map)
   {
 
@@ -327,7 +323,6 @@ void JobsList::removeFinishedJobs()
 
 void JobsList::printJobsList()
 {
-  cout << "in JobsList::printJobsList\n";
   removeFinishedJobs();
   for (auto &[key, job] : jbs_map)
   {
@@ -340,8 +335,4 @@ void JobsList::printJobsList()
     }
     cout << endl;
   }
-}
-
-JobsList::JobsList() : jbs_map()
-{
 }
