@@ -127,7 +127,7 @@ void _removeBackgroundSign(string &cmd_line)
 
 /************** !!!!SmallShell implements!!!! ******************/
 
-SmallShell::SmallShell() : smash_name("smash")
+SmallShell::SmallShell() : smash_name("smash"), jobs_list()
 {
   cout << "smash: " << smash_name << "> " << endl;
 }
@@ -269,7 +269,7 @@ KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 /************** !!!!executes!!!! ******************/
 void chpromptCommand::execute()
 {
-  cout << this->prompt << endl;
+  // cout << this->prompt << endl;
   // cout << SmallShell::getInstance().getPrompt() << endl;
   SmallShell::getInstance().setPrompt(this->prompt);
   // cout << SmallShell::getInstance().getPrompt() << endl;
