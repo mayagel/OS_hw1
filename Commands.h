@@ -182,6 +182,9 @@ public:
 class ForegroundCommand : public BuiltInCommand
 {
   // TODO: Add your data members
+  int job_id;
+  JobsList::JobEntry *job;
+
 public:
   ForegroundCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   ForegroundCommand(const char *cmd_line, JobsList *jobs);
@@ -257,6 +260,7 @@ private:
 public:
   Command *CreateCommand(const char *cmd_line);
   void printJobs();
+  JobsList &getJobs() { return jobs_list; }
   pid_t getPidSmash() { return getpid(); };
   SmallShell(SmallShell const &) = delete;     // disable copy ctor
   void operator=(SmallShell const &) = delete; // disable = operator
