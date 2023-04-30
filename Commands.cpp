@@ -339,4 +339,5 @@ void JobsList::printJobsList()
 
 JobsList::JobsList() : jbs_map()
 {
+  cout << "in JobsList constructor" << endl;
 }
