@@ -127,9 +127,9 @@ void _removeBackgroundSign(string &cmd_line)
 
 /************** !!!!SmallShell implements!!!! ******************/
 
-SmallShell::SmallShell()
+SmallShell::SmallShell() : jobs_list()
 {
-  // TODO: add your implementation
+  // add impl if need
 }
 
 SmallShell::~SmallShell()
@@ -340,4 +340,8 @@ void JobsList::printJobsList()
     }
     cout << endl;
   }
+}
+
+JobsList::JobsList() : jbs_map()
+{
 }

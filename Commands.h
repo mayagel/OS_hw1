@@ -156,7 +156,7 @@ public:
   map<int, JobEntry> jbs_map;
   // TODO: Add your data members
 public:
-  JobsList() = default;
+  JobsList();
   ~JobsList() = default;
   void addJob(Command *cmd, bool isStopped = false);
   void printJobsList();
