@@ -129,7 +129,7 @@ void _removeBackgroundSign(string &cmd_line)
 
 SmallShell::SmallShell() : jobs_list(), smash_name("smash")
 {
-  // TODO: add your implementation
+  cout << "smash: " << smash_name << "> " << endl;
 }
 
 SmallShell::~SmallShell()
@@ -339,6 +339,7 @@ void JobsList::printJobsList()
 
 JobsList::JobsList() : jbs_map()
 {
-  cout << SmallShell::getInstance().getPrompt() << endl;
+
+  // cout << SmallShell::getInstance().getPrompt() << endl;
   cout << "in JobsList constructor" << endl;
 }
