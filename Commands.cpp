@@ -339,5 +339,6 @@ void JobsList::printJobsList()
 
 JobsList::JobsList() : jbs_map()
 {
+  cout << SmallShell::getInstance().getPrompt() << endl;
   cout << "in JobsList constructor" << endl;
 }
