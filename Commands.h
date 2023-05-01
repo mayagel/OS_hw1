@@ -171,7 +171,7 @@ public:
   void removeJobById(int jobId);
   JobEntry *getLastJob(int *lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
-
+  void removeJobById(int jobId);
   // TODO: Add extra methods or modify exisitng ones as needed
 };
 
@@ -188,8 +188,9 @@ public:
 class ForegroundCommand : public BuiltInCommand
 {
   // TODO: Add your data members
-  int job_id;
-  JobsList::JobEntry *job;
+  // int job_id;
+  // JobsList::JobEntry *job;
+  int job_to_fg;
 
 public:
   ForegroundCommand(string cmd_line, vector<string> args, pid_t pid = -1);
@@ -289,6 +290,7 @@ public:
   void executeCommand(const char *cmd_line);
   void setCurrentCmd(Command *cmd = nullptr) { curr_cmd = cmd; };
   Command *getCurrentCmd() { return curr_cmd; };
+  void removeJobById(int jobId)
   // TODO: add extra methods as needed
 };
 

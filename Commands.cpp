@@ -215,7 +215,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   // }
   else
   {
-    cout << "external commands" << endl;
+    // cout << "external commands" << endl;
     return new ExternalCommand(org_cmd, args);
   }
   return nullptr;
@@ -232,8 +232,14 @@ void SmallShell::executeCommand(const char *cmd_line)
 
 void SmallShell::printJobs()
 {
-  cout << "in print jobs" << endl;
+  // cout << "in print jobs" << endl;
   jobs_list.printJobsList();
+}
+
+void SmallShell::removeJobById(int jobId)
+{
+  // cout << "in remove job by id" << endl;
+  jobs_list.removeJobById(jobId);
 }
 
 /************** !!!!constructors!!!! ******************/
@@ -253,32 +259,47 @@ ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t p
 }
 JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in JobsCommand command" << endl;
+  // cout << "in JobsCommand command" << endl;
 }
 ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in ForegroundCommand command" << endl;
-}
-BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
-{
-  cout << "in BackgroundCommand command" << endl;
+  // cout << "in ForegroundCommand command" << endl;
   if (args.size() == 1)
   {
-    cout << "args size is 1" << endl;
+    // cout << "args size is 1" << endl;
     int res;
     SmallShell::getInstance().getJobs().getLastStoppedJob(&res);
 
-    cout << "res is: " << res << endl;
+    // cout << "res is: " << res << endl;
+    job_to_fg = res;
+  }
+  else if (args.size() == 2)
+  {
+    // cout << "args size is 2" << endl;
+    // check if valid
+    job_to_fg = stoi(args[1]);
+  }
+}
+BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  // cout << "in BackgroundCommand command" << endl;
+  if (args.size() == 1)
+  {
+    // cout << "args size is 1" << endl;
+    int res;
+    SmallShell::getInstance().getJobs().getLastStoppedJob(&res);
+
+    // cout << "res is: " << res << endl;
     job_to_bg = res;
   }
   else if (args.size() == 2)
   {
-    cout << "args size is 2" << endl;
+    // cout << "args size is 2" << endl;
     // check if valid
     job_to_bg = stoi(args[1]);
   }
 
-  cout << "after BackgroundCommand command" << endl;
+  // cout << "after BackgroundCommand command" << endl;
 }
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -323,11 +344,26 @@ void JobsCommand::execute()
 }
 void ForegroundCommand::execute()
 {
-  // cout << "in ForegroundCommand execute" << endl;
-  // cout << "job id is: " << job_id << endl;
-  // SmallShell::getInstance().setCurrentCmdPid();
-  // cout << job->getCommand() << " : " << job->getPid() << endl;
-  // SmallShell::getInstance().getJobs().getJobById(job_id).setIsStopped(false);
+  Command *cmd = SmallShell::getInstance().getJobs().getJobById(job_to_fg)->getCmd();
+  JobsList::JobEntry *the_job = SmallShell::getInstance().getJobs().getJobById(job_to_fg);
+  if (the_job->isStopped())
+  {
+    // the_job->setStopped(false);
+    if (kill(the_job->getPid(), SIGCONT) == -1)
+    {
+      perror("smash error: kill failed");
+    }
+  }
+  cout << the_job->getCommand() << " : " << the_job->getPid() << endl;
+  SmallShell::getInstance().setCurrentCmd(cmd);
+  SmallShell::getInstance().removeJobById(job_to_fg);
+  if (waitpid(cmd->getPid(), nullptr, WUNTRACED) == -1)
+  {
+    perror("smash error: waitpid failed");
+  }
+  // SmallShell::getInstance().setCurrentCmdPid(-1);
+  SmallShell::getInstance().setCurrentCmd(nullptr);
+  // SmallShell::getInstance().setCurrentJobId(-1);
 }
 void BackgroundCommand::execute()
 {
@@ -486,4 +522,9 @@ JobsList::JobEntry::JobEntry(int id, bool isStopped, Command *cmd) : job_id(id),
 JobsList::JobEntry *JobsList::getJobById(int jobId)
 {
   return &jbs_map.at(jobId);
+}
+
+void JobsList::removeJobById(int jobId)
+{
+  jbs_map.erase(jobId);
 }
