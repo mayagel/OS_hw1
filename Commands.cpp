@@ -364,7 +364,7 @@ void ExternalCommand::execute()
       cout << "add background command to list" << endl;
       cout << "pid is: " << temp_pid << endl;
       cout << "cmd is: " << cmd_str << endl;
-      cout << "job id is: " << SmallShell::getInstance().getJobs().getLastJobId() << endl;
+      cout << "job id is: " << this->getJobId() << endl;
       SmallShell::getInstance().getJobs().addJob(this, false);
     }
     else
