@@ -258,6 +258,11 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   cout << "in BackgroundCommand command";
+  // int key = SmallShell::getInstance().jobs_list.getLastStoppedJob();
+  if (args.size() == 1)
+  {
+    cout << "get the biggest job" << endl;
+  }
 }
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -351,4 +356,18 @@ JobsList::JobsList() : jbs_map()
 
   // cout << SmallShell::getInstance().getPrompt() << endl;
   // cout << "in JobsList constructor" << endl;
+}
+
+JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
+{
+  JobEntry *res = nullptr;
+  for (auto &[key, job] : jbs_map)
+  {
+    if (job.isStopped())
+    {
+      *jobId = key;
+      res = &job;
+    }
+  }
+  return res;
 }
