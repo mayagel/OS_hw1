@@ -171,7 +171,6 @@ public:
   void removeJobById(int jobId);
   JobEntry *getLastJob(int *lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
-  void removeJobById(int jobId);
   // TODO: Add extra methods or modify exisitng ones as needed
 };
 
@@ -290,7 +289,7 @@ public:
   void executeCommand(const char *cmd_line);
   void setCurrentCmd(Command *cmd = nullptr) { curr_cmd = cmd; };
   Command *getCurrentCmd() { return curr_cmd; };
-  void removeJobById(int jobId)
+  void removeJobById(int jobId);
   // TODO: add extra methods as needed
 };
 
