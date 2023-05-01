@@ -445,7 +445,7 @@ void JobsList::addJob(Command *cmd, bool isStopped)
   {
     if (key > max_id)
     {
-      max_id = key;
+      max_id = key + 1;
     }
   }
   // JobEntry job(max_id, isStopped, cmd);
