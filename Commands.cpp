@@ -427,3 +427,26 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
   }
   return res;
 }
+
+void JobsList::addJob(Command *cmd, bool isStopped)
+{
+  removeFinishedJobs();
+  int max_id = 1;
+  for (auto &[key, job] : jbs_map)
+  {
+    if (key > max_id)
+    {
+      max_id = key;
+    }
+  }
+  JobEntry job(max_id, isStopped, cmd);
+  jbs_map.insert({max_id, job});
+  // JobEntry job(cmd, isStopped);
+  // jbs_map.insert({job.getPid(), job});
+}
+
+JobsList::JobEntry::JobEntry(int id, bool isStopped, Command *cmd) : id(id), isStopped(isStopped), cmd(cmd)
+{
+  // this->pid = cmd->getPid();
+  this->start_time = time(NULL);
+}
