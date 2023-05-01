@@ -445,7 +445,7 @@ void JobsList::addJob(Command *cmd, bool isStopped)
   // jbs_map.insert({job.getPid(), job});
 }
 
-JobsList::JobEntry::JobEntry(int id, bool isStopped, Command *cmd) : id(id), isStopped(isStopped), cmd(cmd)
+JobsList::JobEntry::JobEntry(int id, bool isStopped, Command *cmd) : job_id(id), is_stopped(isStopped), cmd(cmd)
 {
   // this->pid = cmd->getPid();
   this->start_time = time(NULL);
