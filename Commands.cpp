@@ -279,6 +279,7 @@ KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 
 ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid) : Command(cmd_line, args, pid)
 {
+  cout << "job id is: " << job_id << endl;
   cout << "in ExternalCommand command";
 }
 
