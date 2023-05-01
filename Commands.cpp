@@ -475,3 +475,8 @@ JobsList::JobEntry::JobEntry(int id, bool isStopped, Command *cmd) : job_id(id),
   // this->pid = cmd->getPid();
   this->start_time = time(NULL);
 }
+
+JobsList::JobEntry *JobsList::getJobById(int jobId)
+{
+  return &jbs_map.at(jobId);
+}
