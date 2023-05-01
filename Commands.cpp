@@ -215,7 +215,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   // }
   else
   {
-    cout << "external commands";
+    cout << "external commands" << endl;
     return new ExternalCommand(org_cmd, args);
   }
   return nullptr;
@@ -253,11 +253,11 @@ ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t p
 }
 JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in JobsCommand command";
+  cout << "in JobsCommand command" << endl;
 }
 ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in ForegroundCommand command";
+  cout << "in ForegroundCommand command" << endl;
 }
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -274,21 +274,21 @@ BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t
     job_to_bg = stoi(args[1]);
   }
 
-  cout << "in BackgroundCommand command";
+  cout << "in BackgroundCommand command" << endl;
 }
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in QuitCommand command";
+  cout << "in QuitCommand command" << endl;
 }
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in KillCommand command";
+  cout << "in KillCommand command" << endl;
 }
 
 ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid) : Command(cmd_line, args, pid)
 {
   cout << "job id is: " << job_id << endl;
-  cout << "in ExternalCommand command";
+  cout << "in ExternalCommand command" << endl;
 }
 
 /************** !!!!executes!!!! ******************/
@@ -416,7 +416,7 @@ void JobsList::printJobsList()
   {
     time_t now = time(NULL);
     // int seconds = difftime(now, job.getStartTime());
-    cout << "[" << key << "] " << job.getCommand() << " : " << job.getPid() << " " << int(difftime(now, job.getStartTime())) << " secs";
+    cout << "[" << key << "] " << job.getCommand() << " : " << job.getPid() << " " << int(difftime(now, job.getStartTime())) << " secs" << endl;
     if (job.isStopped())
     {
       cout << " (stopped)";
