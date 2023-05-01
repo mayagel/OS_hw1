@@ -440,7 +440,7 @@ void JobsList::addJob(Command *cmd, bool isStopped)
     jbs_map.insert({cmd->getJobId(), JobEntry(cmd->getJobId(), isStopped, cmd)});
     return;
   }
-  int max_id = 1;
+  int max_id = 0;
   for (auto &[key, job] : jbs_map)
   {
     if (key > max_id)
