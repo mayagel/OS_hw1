@@ -311,9 +311,10 @@ void JobsCommand::execute()
 }
 void ForegroundCommand::execute()
 {
-  cout << "in ForegroundCommand execute" << endl;
-  cout << "job id is: " << job_id << endl;
-  cout << job->getCommand() << " : " << job->getPid() << endl;
+  // cout << "in ForegroundCommand execute" << endl;
+  // cout << "job id is: " << job_id << endl;
+  // SmallShell::getInstance().setCurrentCmdPid();
+  // cout << job->getCommand() << " : " << job->getPid() << endl;
   // SmallShell::getInstance().getJobs().getJobById(job_id).setIsStopped(false);
 }
 void BackgroundCommand::execute()
@@ -355,9 +356,6 @@ void ExternalCommand::execute()
         exit(1);
       }
     }
-    {
-      /* code */
-    }
   }
   else // father
   {
@@ -368,7 +366,9 @@ void ExternalCommand::execute()
     }
     else
     {
+      SmallShell::getInstance().setCurrentCmd(this);
       waitpid(temp_pid, NULL, WUNTRACED);
+      SmallShell::getInstance().setCurrentCmd();
     }
   }
 }
@@ -431,6 +431,11 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
 void JobsList::addJob(Command *cmd, bool isStopped)
 {
   removeFinishedJobs();
+  if (cmd->getJobId() != -1)
+  {
+    jbs_map.insert({cmd->getJobId(), JobEntry(cmd->getJobId(), isStopped, cmd)});
+    return;
+  }
   int max_id = 1;
   for (auto &[key, job] : jbs_map)
   {
@@ -439,8 +444,8 @@ void JobsList::addJob(Command *cmd, bool isStopped)
       max_id = key;
     }
   }
-  JobEntry job(max_id, isStopped, cmd);
-  jbs_map.insert({max_id, job});
+  // JobEntry job(max_id, isStopped, cmd);
+  jbs_map.insert({max_id, JobEntry(max_id, isStopped, cmd)});
   // JobEntry job(cmd, isStopped);
   // jbs_map.insert({job.getPid(), job});
 }

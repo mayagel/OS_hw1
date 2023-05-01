@@ -20,13 +20,15 @@ protected:
   std::string cmd_str; // without changes
   std::vector<string> args;
   pid_t pid;
+  int job_id;
 
 public:
-  Command(string cmd_line, vector<string> args, pid_t pid = -1) : cmd_str(cmd_line), args(args), pid(pid){};
+  Command(string cmd_line, vector<string> args, pid_t pid = -1, int job_id = -1) : cmd_str(cmd_line), args(args), pid(pid){};
   virtual ~Command(){};
   virtual void execute() = 0;
-  std::string getCmdStr() { cmd_str; };
-  pid_t getPid() { pid; }
+  std::string getCmdStr() { return cmd_str; };
+  pid_t getPid() { return pid; }
+  int getJobId() { return job_id; }
   // virtual void prepare();
   // virtual void cleanup();
   //  TODO: Add your extra methods if needed
@@ -256,6 +258,7 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
+  Command *curr_cmd;
   std::string smash_name;
   JobsList jobs_list;
   SmallShell();
@@ -281,6 +284,8 @@ public:
   };
   ~SmallShell();
   void executeCommand(const char *cmd_line);
+  void setCurrentCmd(Command *cmd = nullptr) { curr_cmd = cmd; };
+  Command *getCurrentCmd() { return curr_cmd; };
   // TODO: add extra methods as needed
 };
 
