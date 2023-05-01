@@ -142,6 +142,7 @@ public:
     bool is_stopped;
     time_t start_time;
     Command *cmd;
+    int job_id;
 
   public:
     JobEntry(int job_id, bool is_stopped, Command *cmd);
