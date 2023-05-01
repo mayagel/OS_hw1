@@ -362,7 +362,7 @@ void ExternalCommand::execute()
     this->pid = temp_pid;
     if (_isBackgroundComamnd(cmd_str))
     {
-      cout << "add background command to list" << endl;
+      // cout << "add background command to list" << endl;
       cout << "pid is: " << temp_pid << endl;
       cout << "cmd is: " << cmd_str << endl;
       cout << "job id is: " << this->getJobId() << endl;
