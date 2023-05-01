@@ -197,10 +197,10 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new ForegroundCommand(org_cmd, args);
   }
-  // else if (args[0] == "bg")
-  // {
-  //   return new BackgroundCommand(org_cmd, args);
-  // }
+  else if (args[0] == "bg")
+  {
+    return new BackgroundCommand(org_cmd, args);
+  }
   // else if (args[0] == "quit")
   // {
   //   return new QuitCommand(org_cmd, args);
