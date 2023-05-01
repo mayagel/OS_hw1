@@ -329,6 +329,7 @@ void BackgroundCommand::execute()
 {
   cout << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getCommand() << " : " << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid() << endl;
   SmallShell::getInstance().getJobs().getJobById(job_to_bg)->setStopped(false);
+  cout << "in BackgroundCommand execute" << endl;
   if (kill(SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid(), SIGCONT) == -1)
   {
     cout << "smash error: kill failed" << endl;
@@ -416,7 +417,7 @@ void JobsList::printJobsList()
   {
     time_t now = time(NULL);
     // int seconds = difftime(now, job.getStartTime());
-    cout << "[" << key << "] " << job.getCommand() << " : " << job.getPid() << " " << int(difftime(now, job.getStartTime())) << " secs" << endl;
+    cout << "[" << key << "] " << job.getCommand() << " : " << job.getPid() << " " << int(difftime(now, job.getStartTime())) << " secs";
     if (job.isStopped())
     {
       cout << " (stopped)";
