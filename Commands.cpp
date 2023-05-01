@@ -22,6 +22,8 @@ const std::string WHITESPACE = " \n\r\t\f\v";
 #define FUNC_EXIT()
 #endif
 
+/************** !!!!helpers!!!! ******************/
+
 string _ltrim(const std::string &s)
 {
   size_t start = s.find_first_not_of(WHITESPACE);
@@ -145,13 +147,12 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   if (!cmd_line)
     return nullptr;
   string org_cmd = string(cmd_line);
-
   vector<string> args;
   if (!_parseCommandLine(org_cmd, args))
   {
     return nullptr;
   }
-  string last_arg = args.back();
+  /*string last_arg = args.back();
   args.erase(args.end() - 1);
   if (_isBackgroundComamnd(last_arg))
   {
@@ -164,7 +165,15 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   // args.push_back(last_arg);
   //  string fix_cmd = org_cmd;
   //  _removeBackgroundSign(org_cmd); // maybe delete whitespace at the end
-
+*/
+  if (_isBackgroundComamnd(args.back()))
+  {
+    args.back().pop_back();
+    if (args.back().empty())
+    {
+      args.pop_back();
+    }
+  }
   if (args[0] == "chprompt")
   {
     return new chpromptCommand(org_cmd, args);
@@ -189,18 +198,18 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new ForegroundCommand(org_cmd, args);
   }
-  else if (args[0] == "bg")
-  {
-    return new BackgroundCommand(org_cmd, args);
-  }
-  else if (args[0] == "quit")
-  {
-    return new QuitCommand(org_cmd, args);
-  }
-  else if (args[0] == "kill")
-  {
-    return new KillCommand(org_cmd, args);
-  }
+  // else if (args[0] == "bg")
+  // {
+  //   return new BackgroundCommand(org_cmd, args);
+  // }
+  // else if (args[0] == "quit")
+  // {
+  //   return new QuitCommand(org_cmd, args);
+  // }
+  // else if (args[0] == "kill")
+  // {
+  //   return new KillCommand(org_cmd, args);
+  // }
   // else if (args[0] == "setcore")
   // {
   //   return new SetcoreCommand(org_cmd, args);
@@ -208,11 +217,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   else
   {
     cout << "external commands";
-    // if (inBackground)
-    // {
-    //   cmd += "&";
-    // }
-    // return new ExternalCommand(cmd_without_changes, cmd, args, inBackground);
+    return new ExternalCommand(org_cmd, args);
   }
   return nullptr;
 }
@@ -273,6 +278,11 @@ KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
   cout << "in KillCommand command";
 }
 
+ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid) : Command(cmd_line, args, pid)
+{
+  cout << "in ExternalCommand command";
+}
+
 /************** !!!!executes!!!! ******************/
 void chpromptCommand::execute()
 {
@@ -316,6 +326,52 @@ void KillCommand::execute()
 {
 }
 
+void ExternalCommand::execute()
+{
+  pid_t temp_pid = fork();
+  setpgrp();
+  if (temp_pid == 0) // son
+  {
+    if (cmd_str.find("*") != string::npos || cmd_str.find("?") != string::npos)
+    {
+      // string bash_cmd = "/bin/bash";
+      if (execl("/bin/bash", "/bin/bash", "-c", cmd_str.c_str(), NULL) == -1)
+      {
+        perror("smash error: execl failed");
+        exit(1);
+      }
+    }
+    else
+    {
+      vector<char *> char_args;
+      for (auto &arg : args)
+      {
+        char_args.push_back((char *)arg.c_str());
+      }
+      char_args.push_back(NULL);
+      if (execvp(args[0].c_str(), char_args.data()) == -1)
+      {
+        perror("smash error: execl failed");
+        exit(1);
+      }
+    }
+    {
+      /* code */
+    }
+  }
+  else // father
+  {
+    this->pid = temp_pid;
+    if (_isBackgroundComamnd(cmd_str))
+    {
+      SmallShell::getInstance().getJobs().addJob(this, false);
+    }
+    else
+    {
+      waitpid(temp_pid, NULL, WUNTRACED);
+    }
+  }
+}
 /************** !!!!other-implements!!!! ******************/
 
 void JobsList::removeFinishedJobs()

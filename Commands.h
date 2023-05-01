@@ -16,6 +16,7 @@ using std::vector;
 
 class Command
 {
+protected:
   std::string cmd_str; // without changes
   std::vector<string> args;
   pid_t pid;
@@ -41,7 +42,7 @@ public:
 class ExternalCommand : public Command
 {
 public:
-  ExternalCommand(const char *cmd_line);
+  ExternalCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   virtual ~ExternalCommand() {}
   void execute() override;
 };
