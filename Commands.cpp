@@ -261,20 +261,24 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
 }
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
+  cout << "in BackgroundCommand command" << endl;
   if (args.size() == 1)
   {
+    cout << "args size is 1" << endl;
     int res;
     SmallShell::getInstance().getJobs().getLastStoppedJob(&res);
+
     cout << "res is: " << res << endl;
     job_to_bg = res;
   }
   else if (args.size() == 2)
   {
+    cout << "args size is 2" << endl;
     // check if valid
     job_to_bg = stoi(args[1]);
   }
 
-  cout << "in BackgroundCommand command" << endl;
+  cout << "after BackgroundCommand command" << endl;
 }
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -327,6 +331,8 @@ void ForegroundCommand::execute()
 }
 void BackgroundCommand::execute()
 {
+  cout << "in BackgroundCommand execute" << endl;
+  cout << "job id is: " << job_to_bg << endl;
   cout << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getCommand() << " : " << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid() << endl;
   SmallShell::getInstance().getJobs().getJobById(job_to_bg)->setStopped(false);
   cout << "in BackgroundCommand execute" << endl;
