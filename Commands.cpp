@@ -445,12 +445,12 @@ void JobsList::addJob(Command *cmd, bool isStopped)
   {
     if (key > max_id)
     {
-      max_id = key + 1;
+      max_id = key;
     }
   }
   // JobEntry job(max_id, isStopped, cmd);
   cout << "max id is: " << max_id << endl;
-  jbs_map.insert({max_id, JobEntry(max_id, isStopped, cmd)});
+  jbs_map.insert({max_id + 1, JobEntry(max_id, isStopped, cmd)});
   cout << "map size is: " << jbs_map.size() << endl;
   // JobEntry job(cmd, isStopped);
   // jbs_map.insert({job.getPid(), job});
