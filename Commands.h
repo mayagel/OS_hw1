@@ -24,7 +24,7 @@ protected:
   int job_id;
 
 public:
-  Command(string cmd_line, vector<string> args, pid_t pid = -1, int job_id = -1) : cmd_str(cmd_line), args(args), pid(pid){};
+  Command(string cmd_line, vector<string> args, pid_t pid = -1, int job_id = -1) : cmd_str(cmd_line), args(args), pid(pid), job_id(job_id){};
   virtual ~Command(){};
   virtual void execute() = 0;
   std::string getCmdStr() { return cmd_str; };
