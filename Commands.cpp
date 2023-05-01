@@ -261,12 +261,20 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
 }
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in BackgroundCommand command";
-  // int key = SmallShell::getInstance().jobs_list.getLastStoppedJob();
   if (args.size() == 1)
   {
-    cout << "get the biggest job" << endl;
+    int res;
+    SmallShell::getInstance().getJobs().getLastStoppedJob(&res);
+    cout << "res is: " << res << endl;
+    job_to_bg = res;
   }
+  else if (args.size() == 2)
+  {
+    // check if valid
+    job_to_bg = stoi(args[1]);
+  }
+
+  cout << "in BackgroundCommand command";
 }
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -319,6 +327,12 @@ void ForegroundCommand::execute()
 }
 void BackgroundCommand::execute()
 {
+  cout << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getCommand() << " : " << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid() << endl;
+  SmallShell::getInstance().getJobs().getJobById(job_to_bg)->setStopped(false);
+  if (kill(SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid(), SIGCONT) == -1)
+  {
+    cout << "smash error: kill failed" << endl;
+  }
 }
 void QuitCommand::execute()
 {

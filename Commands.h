@@ -200,6 +200,8 @@ public:
 
 class BackgroundCommand : public BuiltInCommand
 {
+private:
+  int job_to_bg;
   // TODO: Add your data members
 public:
   BackgroundCommand(string cmd_line, vector<string> args, pid_t pid = -1);
