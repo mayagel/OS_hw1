@@ -1,6 +1,7 @@
 #include <iostream>
 #include <signal.h>
 #include "signals.h"
+#include <unistd.h>
 #include "Commands.h"
 
 using namespace std;
