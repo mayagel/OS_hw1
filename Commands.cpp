@@ -310,7 +310,7 @@ KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
   job_to_kill = stoi(args[2]);
   // cout << "job to kill is: " << job_to_kill << endl;
   // cout << "signal to send is: " << args[1] << endl;
-  signal_num = (-1) * stoi(args[1]);
+  signal_num = stoi(args[1].substr(1));
   cout << "in KillCommand command" << endl;
 }
 
@@ -386,21 +386,15 @@ void QuitCommand::execute()
 }
 void KillCommand::execute()
 {
-  pid_t pid_to_kill = SmallShell::getInstance().getJobs().getJobById(job_to_kill)->getPid();
   JobsList::JobEntry *job = SmallShell::getInstance().getJobs().getJobById(job_to_kill);
+  pid_t pid_to_kill = job->getPid();
   if (SIGCONT == signal_num)
   {
-    if (job->isStopped())
-    {
-      job->setStopped(false);
-    }
+    job->setStopped(false);
   }
   if (signal_num == SIGSTOP)
   {
-    if (!job->isStopped())
-    {
-      job->setStopped(true);
-    }
+    job->setStopped(true);
   }
   if (kill(pid_to_kill, signal_num) == -1)
   {
