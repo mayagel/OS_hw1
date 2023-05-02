@@ -383,8 +383,10 @@ void QuitCommand::execute()
 {
   if (args[1] == "kill")
   {
+    cout << "you chose to kill all jobs" << endl;
     SmallShell::getInstance().getJobs().killAllJobs();
   }
+  cout << "exit" << endl;
   exit(0);
 }
 void KillCommand::execute()
