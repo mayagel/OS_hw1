@@ -201,14 +201,14 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new BackgroundCommand(org_cmd, args);
   }
-  // else if (args[0] == "quit")
-  // {
-  //   return new QuitCommand(org_cmd, args);
-  // }
-  // else if (args[0] == "kill")
-  // {
-  //   return new KillCommand(org_cmd, args);
-  // }
+  else if (args[0] == "quit")
+  {
+    return new QuitCommand(org_cmd, args);
+  }
+  else if (args[0] == "kill")
+  {
+    return new KillCommand(org_cmd, args);
+  }
   // else if (args[0] == "setcore")
   // {
   //   return new SetcoreCommand(org_cmd, args);
@@ -307,6 +307,10 @@ QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 }
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
+  job_to_kill = stoi(args[2]);
+  // cout << "job to kill is: " << job_to_kill << endl;
+  // cout << "signal to send is: " << args[1] << endl;
+  signal_num = (-1) * stoi(args[1]);
   cout << "in KillCommand command" << endl;
 }
 
@@ -382,6 +386,30 @@ void QuitCommand::execute()
 }
 void KillCommand::execute()
 {
+  pid_t pid_to_kill = SmallShell::getInstance().getJobs().getJobById(job_to_kill)->getPid();
+  JobsList::JobEntry *job = SmallShell::getInstance().getJobs().getJobById(job_to_kill);
+  if (SIGCONT == signal_num)
+  {
+    if (job->isStopped())
+    {
+      job->setStopped(false);
+    }
+  }
+  if (signal_num == SIGSTOP)
+  {
+    if (!job->isStopped())
+    {
+      job->setStopped(true);
+    }
+  }
+  if (kill(pid_to_kill, signal_num) == -1)
+  {
+    perror("smash error: kill failed");
+  }
+  else
+  {
+    cout << "signal number " << signal_num << " was sent to pid " << pid_to_kill << endl;
+  }
 }
 
 void ExternalCommand::execute()
