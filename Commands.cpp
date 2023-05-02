@@ -381,7 +381,8 @@ void BackgroundCommand::execute()
 }
 void QuitCommand::execute()
 {
-  if (args[1] == "kill")
+
+  if (args.size() > 1 && args[1] == "kill")
   {
     cout << "you chose to kill all jobs" << endl;
     SmallShell::getInstance().getJobs().killAllJobs();
