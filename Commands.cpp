@@ -385,9 +385,7 @@ void QuitCommand::execute()
   {
     SmallShell::getInstance().getJobs().killAllJobs();
   }
-  {
-    /* code */
-  }
+  exit(0);
 }
 void KillCommand::execute()
 {
