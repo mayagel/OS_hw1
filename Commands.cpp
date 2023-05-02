@@ -308,9 +308,7 @@ QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   signal_num = stoi(args[1].substr(1));
-  // cout << "job to kill is: " << job_to_kill << endl;
-  // cout << "signal to send is: " << args[1] << endl;
-  signal_num = stoi(args[2]);
+  job_to_kill = stoi(args[2]);
   cout << "in KillCommand command" << endl;
 }
 
