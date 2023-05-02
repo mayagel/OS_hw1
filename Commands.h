@@ -250,6 +250,9 @@ public:
 class KillCommand : public BuiltInCommand
 {
   // TODO: Add your data members
+  int job_to_kill;
+  int signal_num;
+
 public:
   KillCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   KillCommand(const char *cmd_line, JobsList *jobs);
