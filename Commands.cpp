@@ -381,6 +381,13 @@ void BackgroundCommand::execute()
 }
 void QuitCommand::execute()
 {
+  if (args[1] == "kill")
+  {
+    SmallShell::getInstance().getJobs().killAllJobs();
+  }
+  {
+    /* code */
+  }
 }
 void KillCommand::execute()
 {
@@ -548,4 +555,19 @@ JobsList::JobEntry *JobsList::getJobById(int jobId)
 void JobsList::removeJobById(int jobId)
 {
   jbs_map.erase(jobId);
+}
+
+void JobsList::killAllJobs()
+{
+  for (auto &[key, job] : jbs_map)
+  {
+    if (kill(job.getPid(), SIGKILL) == -1)
+    {
+      perror("smash error: kill failed");
+    }
+    else
+    {
+      cout << "signal number " << SIGKILL << " was sent to pid " << job.getPid() << endl;
+    }
+  }
 }
