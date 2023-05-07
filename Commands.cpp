@@ -550,8 +550,18 @@ void RedirectionCommand::execute()
 
 void PipeCommand::execute()
 {
-  int pipefd[2];
-  if (pipe(pipefd) == -1)
+  int in_copy = dup(STDIN_FILENO);
+  int out_copy = dup(STDOUT_FILENO);
+  int err_copy = dup(STDERR_FILENO);
+
+  if (in_copy == -1 || out_copy == -1 || err_copy == -1)
+  {
+    perror("smash error: dup failed");
+    throw CommandException();
+  }
+
+  int fd[2];
+  if (pipe(fd) == -1)
   {
     perror("smash error: pipe failed");
     throw CommandException();
@@ -559,32 +569,75 @@ void PipeCommand::execute()
   pid_t pid1 = fork();
   if (pid1 == -1)
   {
+    close(fd[0]);
+    close(fd[1]);
+    dup2(in_copy, STDIN_FILENO);
+    dup2(out_copy, STDOUT_FILENO);
+    dup2(err_copy, STDERR_FILENO);
     perror("smash error: fork failed");
     throw CommandException();
   }
-  if (pid1 == 0) // son
+  else if (pid1 == 0)
   {
-    close(pipefd[0]);
-    if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+    close(fd[0]);
+    pipe_err ? dup2(fd[1], STDERR_FILENO) : dup2(fd[1], STDOUT_FILENO);
+    Command *cmd1 = SmallShell::getInstance().CreateCommand(args[0].c_str());
+    if (!cmd1)
     {
-      perror("smash error: dup2 failed");
+      close(fd[1]);
+      dup2(in_copy, STDIN_FILENO);
+      dup2(out_copy, STDOUT_FILENO);
+      dup2(err_copy, STDERR_FILENO);
+      throw InvalidArguments(args[0]);
+    }
+    cmd1->execute();
+    delete cmd1;
+    pipe_err ? dup2(err_copy, STDERR_FILENO) : dup2(out_copy, STDOUT_FILENO);
+    // close(fd[1]); //is it ok to close here?
+    exit(0);
+  }
+  else
+  {
+    pid_t pid2 = fork();
+    if (pid2 == -1)
+    {
+      close(fd[0]);
+      close(fd[1]);
+      dup2(in_copy, STDIN_FILENO);
+      dup2(out_copy, STDOUT_FILENO);
+      dup2(err_copy, STDERR_FILENO);
+      perror("smash error: fork failed");
       throw CommandException();
     }
-    close(pipefd[1]);
-    try
+    else if (pid2 == 0)
     {
-      Command *cmd = SmallShell::getInstance().CreateCommand(args[0].c_str());
-      if (!cmd)
+      close(fd[1]);
+      dup2(fd[0], STDIN_FILENO);
+      Command *cmd2 = SmallShell::getInstance().CreateCommand(args[1].c_str());
+      if (!cmd2)
       {
-        throw InvalidArguments(args[0]);
+        close(fd[0]);
+        dup2(in_copy, STDIN_FILENO);
+        dup2(out_copy, STDOUT_FILENO);
+        dup2(err_copy, STDERR_FILENO);
+        throw InvalidArguments(args[1]);
       }
-      cmd->execute();
-      delete cmd;
+      cmd2->execute();
+      delete cmd2;
+      dup2(in_copy, STDIN_FILENO);
+      // close(fd[0]); //is it ok to close here?
+      exit(0);
     }
-    catch (CommandException &e)
+    else
     {
+      close(fd[0]);
+      close(fd[1]);
+      waitpid(pid1, NULL, WUNTRACED);
+      waitpid(pid2, NULL, WUNTRACED);
+      dup2(in_copy, STDIN_FILENO);
+      dup2(out_copy, STDOUT_FILENO);
+      dup2(err_copy, STDERR_FILENO);
     }
-    exit(0);
   }
 }
 
