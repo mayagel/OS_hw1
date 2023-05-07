@@ -391,7 +391,7 @@ private:
 public:
   AlreadyRunningInBackground(string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
   {
-    cerr << "smash error: " + _cmd_line + ": job-id " + to_string(_job_id) + " is already running in the background" << endl;
+    cerr << "smash error: " + _cmd_line + ": job-id " << _job_id << " is already running in the background" << endl;
   }
 };
 

@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
+#include <fcntl.h>
 
 using namespace std;
 
@@ -186,19 +187,20 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     // {
     //   return nullptr;
     // }
-    args.push_back(org_cmd.substr(0, index)).push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
-    return new RedirectionCommand::CreateRedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
+    args.push_back(org_cmd.substr(0, index));
+    args.push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
+    return new RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
   }
-  if (cmd_type == PIPE || cmd_type == PIPE_ERR)
-  {
-    vector<string> args_l, args_r;
-    if (!_parseCommandLine(org_cmd.substr(0, index), args_l) ||
-        !_parseCommandLine(org_cmd(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length(), args_r)))
-    {
-      return nullptr;
-    }
-    // return new;
-  }
+  // if (cmd_type == PIPE || cmd_type == PIPE_ERR)
+  // {
+  //   vector<string> args_l, args_r;
+  //   if (!_parseCommandLine(org_cmd.substr(0, index), args_l) ||
+  //       !_parseCommandLine(org_cmd(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length(), args_r)))
+  //   {
+  //     return nullptr;
+  //   }
+  //   // return new;
+  // }
   if (!_parseCommandLine(org_cmd, args))
   {
     return nullptr;
