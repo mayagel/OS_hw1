@@ -62,8 +62,17 @@ public:
 class RedirectionCommand : public Command
 {
   // TODO: Add your data members
+  // string cmd_lft;
+  // string file_name;
+  bool append;
+
 public:
-  explicit RedirectionCommand(const char *cmd_line);
+  // explicit RedirectionCommand(const char *cmd_line);
+  explicit RedirectionCommand(const string cmd_line, bool append, vector<string> args, pid_t pid = -1) : append(append), Command(cmd_line, args, pid){
+                                                                                                                             // cmd_lft = cmd_line.substr(0, cmd_line.find_first_of(">")); // delete &?
+                                                                                                                             // file_name = args.back();                                   // cmd_line.substr(cmd_line.find_first_of(">") + 1 + append, cmd_line.size());
+                                                                                                                             // args.pop_back();
+                                                                                                                         };
   virtual ~RedirectionCommand() {}
   void execute() override;
   // void prepare() override;
@@ -294,6 +303,119 @@ public:
   Command *getCurrentCmd() { return curr_cmd; };
   void removeJobById(int jobId);
   // TODO: add extra methods as needed
+};
+
+class CommandException : public std::exception
+{
+};
+class TooManyArguments : public CommandException
+{
+private:
+  string _cmd_line;
+
+public:
+  TooManyArguments(string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " + _cmd_line + ": too many arguments" << endl;
+  }
+};
+
+class OldPwdNotSet : public CommandException
+{
+private:
+  string _cmd_line;
+
+public:
+  OldPwdNotSet(string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " + _cmd_line + ": OLDPWD not set" << endl;
+  }
+};
+
+class DefaultError : public CommandException
+{
+private:
+  string _cmd_line;
+
+public:
+  DefaultError(string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " + _cmd_line << endl;
+  }
+};
+
+class JobsListIsEmpty : public CommandException
+{
+private:
+  string _cmd_line;
+
+public:
+  JobsListIsEmpty(string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " + _cmd_line + ": jobs list is empty" << endl;
+  }
+};
+
+class InvalidArguments : public CommandException
+{
+private:
+  string _cmd_line;
+
+public:
+  InvalidArguments(string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " + _cmd_line + ": invalid arguments" << endl;
+  }
+};
+
+class JobDoesNotExist : public CommandException
+{
+private:
+  string _cmd_line;
+  int _job_id;
+
+public:
+  JobDoesNotExist(string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
+  {
+    cerr << "smash error: " + _cmd_line + ": job-id " + to_string(_job_id) + " does not exist" << endl;
+  }
+};
+
+class AlreadyRunningInBackground : public CommandException
+{
+private:
+  string _cmd_line;
+  int _job_id;
+
+public:
+  AlreadyRunningInBackground(string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
+  {
+    cerr << "smash error: " + _cmd_line + ": job-id " + to_string(_job_id) + " is already running in the background" << endl;
+  }
+};
+
+class NoStopedJobs : public CommandException
+{
+private:
+  string _cmd_line;
+
+public:
+  NoStopedJobs(string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " + _cmd_line + ": there is no stopped jobs to resume" << endl;
+  }
+};
+
+class InvalidCoreNumber : public CommandException
+{
+private:
+  string _cmd_line;
+
+public:
+  InvalidCoreNumber(string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " + _cmd_line + ": invalid core number" << endl;
+  }
 };
 
 #endif // SMASH_COMMAND_H_
