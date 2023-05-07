@@ -421,6 +421,14 @@ void BackgroundCommand::execute()
 }
 void QuitCommand::execute()
 {
+
+  if (args.size() > 1 && args[1] == "kill")
+  {
+    cout << "you chose to kill all jobs" << endl;
+    SmallShell::getInstance().getJobs().killAllJobs();
+  }
+  cout << "exit" << endl;
+  exit(0);
 }
 void KillCommand::execute()
 {
@@ -540,17 +548,34 @@ void RedirectionCommand::execute()
 
 void JobsList::removeFinishedJobs()
 {
-  for (auto &[key, job] : jbs_map)
-  {
+  // for (auto &[key, job] : jbs_map)
+  // {
 
-    auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
+  //   auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
+  //   if (wait_stat == -1)
+  //   {
+  //     perror("smash error: waitpid failed");
+  //   }
+  //   else if (wait_stat != 0)
+  //   {
+  //     jbs_map.erase(key);
+  //   }
+  // }
+
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
+  {
+    auto wait_stat = waitpid(it->second.getPid(), NULL, WNOHANG);
     if (wait_stat == -1)
     {
       perror("smash error: waitpid failed");
     }
     else if (wait_stat != 0)
     {
-      jbs_map.erase(key);
+      it = jbs_map.erase(it);
+    }
+    else
+    {
+      ++it;
     }
   }
 }
@@ -610,6 +635,7 @@ void JobsList::addJob(Command *cmd, bool isStopped)
   }
   // JobEntry job(max_id, isStopped, cmd);
   cout << "max id is: " << max_id << endl;
+  cmd->setJobId(max_id + 1);
   jbs_map.insert({max_id + 1, JobEntry(max_id, isStopped, cmd)});
   cout << "map size is: " << jbs_map.size() << endl;
   // JobEntry job(cmd, isStopped);
@@ -630,4 +656,19 @@ JobsList::JobEntry *JobsList::getJobById(int jobId)
 void JobsList::removeJobById(int jobId)
 {
   jbs_map.erase(jobId);
+}
+
+void JobsList::killAllJobs()
+{
+  for (auto &[key, job] : jbs_map)
+  {
+    if (kill(job.getPid(), SIGKILL) == -1)
+    {
+      perror("smash error: kill failed");
+    }
+    else
+    {
+      cout << "signal number " << SIGKILL << " was sent to pid " << job.getPid() << endl;
+    }
+  }
 }
