@@ -21,6 +21,15 @@ const std::string WHITESPACE = " \n\r\t\f\v";
 #define FUNC_EXIT()
 #endif
 
+enum CMD_TYPE
+{
+  REGULAR,
+  REDIRECTION,
+  REDIRECTION_APPEND,
+  PIPE,
+  PIPE_ERR,
+};
+
 /************** !!!!helpers!!!! ******************/
 
 string _ltrim(const std::string &s)
@@ -141,30 +150,65 @@ SmallShell::~SmallShell()
 /**
  * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
  */
+
+CMD_TYPE commandType(string line, int &index)
+{
+  if (line.find(">") != string::npos)
+  {
+    index = line.find(">"); // index of the first >
+    if (line.find(">>") != string::npos)
+    {
+      return REDIRECTION_APPEND;
+    }
+    return REDIRECTION;
+  }
+  else if (line.find("|") != string::npos)
+  {
+    index = line.find("|"); // index of the first |
+    if (line.find("|&") != string::npos)
+    {
+      return PIPE_ERR;
+    }
+    return PIPE;
+  }
+  return REGULAR;
+}
+/**
+ * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
+ */
 Command *SmallShell::CreateCommand(const char *cmd_line)
 {
   if (!cmd_line)
     return nullptr;
   string org_cmd = string(cmd_line);
+  int index = 0;
+  CMD_TYPE cmd_type = commandType(org_cmd, index);
   vector<string> args;
+  if (cmd_type == REDIRECTION || cmd_type == REDIRECTION_APPEND)
+  {
+    // if (!_parseCommandLine(org_cmd.substr(0, index) +
+    //                        org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()) args))
+    // {
+    //   return nullptr;
+    // }
+    args.push_back(org_cmd.substr(0, index));
+    args.push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
+    return new RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
+  }
+  // if (cmd_type == PIPE || cmd_type == PIPE_ERR)
+  // {
+  //   vector<string> args_l, args_r;
+  //   if (!_parseCommandLine(org_cmd.substr(0, index), args_l) ||
+  //       !_parseCommandLine(org_cmd(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length(), args_r)))
+  //   {
+  //     return nullptr;
+  //   }
+  //   // return new;
+  // }
   if (!_parseCommandLine(org_cmd, args))
   {
     return nullptr;
   }
-  /*string last_arg = args.back();
-  args.erase(args.end() - 1);
-  if (_isBackgroundComamnd(last_arg))
-  {
-    // cout << "found &!!!\n";
-    last_arg.pop_back();
-    // cout << "delete &\n\n\n";
-    // cout << "now last arg is: " << string(last_arg) << endl;
-  }
-  args.push_back(last_arg);
-  // args.push_back(last_arg);
-  //  string fix_cmd = org_cmd;
-  //  _removeBackgroundSign(org_cmd); // maybe delete whitespace at the end
-*/
   if (_isBackgroundComamnd(args.back()))
   {
     args.back().pop_back();
@@ -220,7 +264,6 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   }
   return nullptr;
 }
-
 void SmallShell::executeCommand(const char *cmd_line)
 {
 
