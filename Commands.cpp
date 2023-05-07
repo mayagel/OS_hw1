@@ -243,6 +243,7 @@ void SmallShell::removeJobById(int jobId)
 }
 
 /************** !!!!constructors!!!! ******************/
+
 GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   // if (!getcwd())
@@ -266,11 +267,11 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
   // cout << "in ForegroundCommand command" << endl;
   if (args.size() == 1)
   {
-    // cout << "args size is 1" << endl;
+    cout << "args size is 1" << endl;
     int res;
     SmallShell::getInstance().getJobs().getLastStoppedJob(&res);
 
-    // cout << "res is: " << res << endl;
+    cout << "res is: " << res << endl;
     job_to_fg = res;
   }
   else if (args.size() == 2)
@@ -319,6 +320,7 @@ ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid
 }
 
 /************** !!!!executes!!!! ******************/
+
 void chpromptCommand::execute()
 {
   // cout << this->prompt << endl;
@@ -335,7 +337,6 @@ void ShowPidCommand::execute()
 void GetCurrDirCommand::execute()
 {
   cout << pwd << endl;
-  // SmallShell::getInstance().setPrompt(this->prompt);
 }
 void ChangeDirCommand::execute()
 {
