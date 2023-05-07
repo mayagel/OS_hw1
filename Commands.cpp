@@ -5,7 +5,6 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
-#include <fcntl.h>
 
 using namespace std;
 
@@ -22,14 +21,6 @@ const std::string WHITESPACE = " \n\r\t\f\v";
 #define FUNC_EXIT()
 #endif
 
-enum CMD_TYPE
-{
-  REGULAR,
-  REDIRECTION,
-  REDIRECTION_APPEND,
-  PIPE,
-  PIPE_ERR,
-};
 /************** !!!!helpers!!!! ******************/
 
 string _ltrim(const std::string &s)
@@ -147,28 +138,6 @@ SmallShell::~SmallShell()
   // TODO: add your implementation
 }
 
-CMD_TYPE commandType(string line, int &index)
-{
-  if (line.find(">") != string::npos)
-  {
-    index = line.find(">"); // index of the first >
-    if (line.find(">>") != string::npos)
-    {
-      return REDIRECTION_APPEND;
-    }
-    return REDIRECTION;
-  }
-  else if (line.find("|") != string::npos)
-  {
-    index = line.find("|"); // index of the first |
-    if (line.find("|&") != string::npos)
-    {
-      return PIPE_ERR;
-    }
-    return PIPE;
-  }
-  return REGULAR;
-}
 /**
  * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
  */
@@ -177,34 +146,25 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   if (!cmd_line)
     return nullptr;
   string org_cmd = string(cmd_line);
-  int index = 0;
-  CMD_TYPE cmd_type = commandType(org_cmd, index);
   vector<string> args;
-  if (cmd_type == REDIRECTION || cmd_type == REDIRECTION_APPEND)
-  {
-    // if (!_parseCommandLine(org_cmd.substr(0, index) +
-    //                        org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()) args))
-    // {
-    //   return nullptr;
-    // }
-    args.push_back(org_cmd.substr(0, index));
-    args.push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
-    return new RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
-  }
-  // if (cmd_type == PIPE || cmd_type == PIPE_ERR)
-  // {
-  //   vector<string> args_l, args_r;
-  //   if (!_parseCommandLine(org_cmd.substr(0, index), args_l) ||
-  //       !_parseCommandLine(org_cmd(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length(), args_r)))
-  //   {
-  //     return nullptr;
-  //   }
-  //   // return new;
-  // }
   if (!_parseCommandLine(org_cmd, args))
   {
     return nullptr;
   }
+  /*string last_arg = args.back();
+  args.erase(args.end() - 1);
+  if (_isBackgroundComamnd(last_arg))
+  {
+    // cout << "found &!!!\n";
+    last_arg.pop_back();
+    // cout << "delete &\n\n\n";
+    // cout << "now last arg is: " << string(last_arg) << endl;
+  }
+  args.push_back(last_arg);
+  // args.push_back(last_arg);
+  //  string fix_cmd = org_cmd;
+  //  _removeBackgroundSign(org_cmd); // maybe delete whitespace at the end
+*/
   if (_isBackgroundComamnd(args.back()))
   {
     args.back().pop_back();
@@ -502,72 +462,38 @@ void ExternalCommand::execute()
     }
   }
 }
-void RedirectionCommand::execute()
-{
-  int stdout_copy = dup(STDOUT_FILENO);
-  close(STDOUT_FILENO);
-  int fd;
-  if (append)
-  {
-    fd = open(args[1].c_str(), O_WRONLY | O_CREAT | O_APPEND, 0655);
-  }
-  else
-  {
-    fd = open(args[1].c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0655);
-  }
-  if (fd == -1)
-  {
-    dup2(stdout_copy, STDOUT_FILENO);
-    perror("smash error: open failed");
-    throw CommandException();
-  }
-  try
-  {
-    Command *cmd = SmallShell::getInstance().CreateCommand(args[0].c_str());
-    if (!cmd)
-    {
-      dup2(stdout_copy, STDOUT_FILENO);
-      close(stdout_copy);
-      throw InvalidArguments(args[0]);
-    }
-    cmd->execute();
-    delete cmd;
-  }
-  catch (CommandException &e)
-  {
-  }
-  if (close(fd) == -1)
-  {
-    perror("smash error: close failed");
-  }
-  dup2(stdout_copy, STDOUT_FILENO);
-  close(stdout_copy);
-}
-
 /************** !!!!other-implements!!!! ******************/
 
-// void JobsList::removeFinishedJobs()
-// {
-// for (auto &[key, job] : jbs_map)
-// {
-
-//   auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
-//   if (wait_stat == -1)
-//   {
-//     perror("smash error: waitpid failed");
-//   }
-//   else if (wait_stat != 0)
-//   {
-//     jbs_map.erase(key);
-//   }
-// }
 void JobsList::removeFinishedJobs()
 {
-  for (auto &[key, job] : jbs_map)
+  // for (auto &[key, job] : jbs_map)
+  // {
+
+  //   auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
+  //   if (wait_stat == -1)
+  //   {
+  //     perror("smash error: waitpid failed");
+  //   }
+  //   else if (wait_stat != 0)
+  //   {
+  //     jbs_map.erase(key);
+  //   }
+  // }
+
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
-    if (waitpid(job.getPid(), nullptr, WNOHANG) != 0)
+    auto wait_stat = waitpid(it->second.getPid(), NULL, WNOHANG);
+    if (wait_stat == -1)
     {
-      jbs_map.erase(key);
+      perror("smash error: waitpid failed");
+    }
+    else if (wait_stat != 0)
+    {
+      it = jbs_map.erase(it);
+    }
+    else
+    {
+      ++it;
     }
   }
 }
