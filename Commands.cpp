@@ -546,36 +546,28 @@ void RedirectionCommand::execute()
 
 /************** !!!!other-implements!!!! ******************/
 
+// void JobsList::removeFinishedJobs()
+// {
+// for (auto &[key, job] : jbs_map)
+// {
+
+//   auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
+//   if (wait_stat == -1)
+//   {
+//     perror("smash error: waitpid failed");
+//   }
+//   else if (wait_stat != 0)
+//   {
+//     jbs_map.erase(key);
+//   }
+// }
 void JobsList::removeFinishedJobs()
 {
-  // for (auto &[key, job] : jbs_map)
-  // {
-
-  //   auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
-  //   if (wait_stat == -1)
-  //   {
-  //     perror("smash error: waitpid failed");
-  //   }
-  //   else if (wait_stat != 0)
-  //   {
-  //     jbs_map.erase(key);
-  //   }
-  // }
-
-  for (auto it = jbs_map.begin(); it != jbs_map.end();)
+  for (auto &[key, job] : jbs_map)
   {
-    auto wait_stat = waitpid(it->second.getPid(), NULL, WNOHANG);
-    if (wait_stat == -1)
+    if (waitpid(job.getPid(), nullptr, WNOHANG) != 0)
     {
-      perror("smash error: waitpid failed");
-    }
-    else if (wait_stat != 0)
-    {
-      it = jbs_map.erase(it);
-    }
-    else
-    {
-      ++it;
+      jbs_map.erase(key);
     }
   }
 }
