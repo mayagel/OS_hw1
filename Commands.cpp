@@ -538,7 +538,9 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
 
 JobsList::JobEntry *JobsList::getLastJob(int *jobId)
 {
+  *jobId = jbs_map.rbegin()->first;
   return &jbs_map.rbegin()->second;
+
   // JobEntry *res = nullptr;
   // for (auto &[key, job] : jbs_map)
   // {
