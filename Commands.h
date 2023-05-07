@@ -10,6 +10,7 @@
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
 
+using std::cerr;
 using std::endl;
 using std::map;
 using std::string;
