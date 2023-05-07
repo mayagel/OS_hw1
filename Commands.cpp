@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <iomanip>
 #include "Commands.h"
+#include <fcntl.h>
 
 using namespace std;
 
