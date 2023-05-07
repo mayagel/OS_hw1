@@ -483,6 +483,11 @@ void JobsList::removeFinishedJobs()
   for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
     auto wait_stat = waitpid(it->second.getPid(), NULL, WNOHANG);
+    // if (wait_s)
+    // {
+    //   /* code */
+    // }
+
     if (wait_stat == -1)
     {
       perror("smash error: waitpid failed");
@@ -490,10 +495,6 @@ void JobsList::removeFinishedJobs()
     else if (wait_stat != 0)
     {
       it = jbs_map.erase(it);
-    }
-    else
-    {
-      ++it;
     }
   }
 }
