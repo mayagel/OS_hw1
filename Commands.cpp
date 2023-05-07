@@ -269,7 +269,7 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
   {
     cout << "args size is 1" << endl;
     int res;
-    SmallShell::getInstance().getJobs().getLastStoppedJob(&res);
+    SmallShell::getInstance().getJobs().getLastJob(&res);
 
     cout << "res is: " << res << endl;
     job_to_fg = res;
@@ -534,6 +534,21 @@ JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
     }
   }
   return res;
+}
+
+JobsList::JobEntry *JobsList::getLastJob(int *jobId)
+{
+  return &jbs_map.rbegin()->second;
+  // JobEntry *res = nullptr;
+  // for (auto &[key, job] : jbs_map)
+  // {
+  //   // if (job.isStopped())
+  //   // {
+  //     *jobId = key;
+  //     res = &job;
+  //   // }
+  // }
+  // return res;
 }
 
 void JobsList::addJob(Command *cmd, bool isStopped)
