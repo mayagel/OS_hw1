@@ -378,7 +378,7 @@ private:
 public:
   JobDoesNotExist(string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
   {
-    cerr << "smash error: " + _cmd_line + ": job-id " + to_string(_job_id) + " does not exist" << endl;
+    cerr << "smash error: " + _cmd_line + ": job-id " << _job_id << " does not exist" << endl;
   }
 };
 
