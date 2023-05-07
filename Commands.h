@@ -30,6 +30,7 @@ public:
   std::string getCmdStr() { return cmd_str; };
   pid_t getPid() { return pid; }
   int getJobId() { return job_id; }
+  void setJobId(int new_job_id) { job_id = new_job_id; }
   // virtual void prepare();
   // virtual void cleanup();
   //  TODO: Add your extra methods if needed
