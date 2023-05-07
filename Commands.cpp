@@ -196,16 +196,14 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
     args.push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
     return new RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
   }
-  // if (cmd_type == PIPE || cmd_type == PIPE_ERR)
-  // {
-  //   vector<string> args_l, args_r;
-  //   if (!_parseCommandLine(org_cmd.substr(0, index), args_l) ||
-  //       !_parseCommandLine(org_cmd(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length(), args_r)))
-  //   {
-  //     return nullptr;
-  //   }
-  //   // return new;
-  // }
+
+  if (cmd_type == PIPE || cmd_type == PIPE_ERR)
+  {
+    args.push_back(org_cmd.substr(0, index));
+    args.push_back(org_cmd.substr(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length()));
+    return new PipeCommand(org_cmd, cmd_type == PIPE_ERR, args);
+  }
+
   if (!_parseCommandLine(org_cmd, args))
   {
     return nullptr;
@@ -548,6 +546,46 @@ void RedirectionCommand::execute()
   }
   dup2(stdout_copy, STDOUT_FILENO);
   close(stdout_copy);
+}
+
+void PipeCommand::execute()
+{
+  int pipefd[2];
+  if (pipe(pipefd) == -1)
+  {
+    perror("smash error: pipe failed");
+    throw CommandException();
+  }
+  pid_t pid1 = fork();
+  if (pid1 == -1)
+  {
+    perror("smash error: fork failed");
+    throw CommandException();
+  }
+  if (pid1 == 0) // son
+  {
+    close(pipefd[0]);
+    if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+    {
+      perror("smash error: dup2 failed");
+      throw CommandException();
+    }
+    close(pipefd[1]);
+    try
+    {
+      Command *cmd = SmallShell::getInstance().CreateCommand(args[0].c_str());
+      if (!cmd)
+      {
+        throw InvalidArguments(args[0]);
+      }
+      cmd->execute();
+      delete cmd;
+    }
+    catch (CommandException &e)
+    {
+    }
+    exit(0);
+  }
 }
 
 /************** !!!!other-implements!!!! ******************/

@@ -54,9 +54,11 @@ public:
 
 class PipeCommand : public Command
 {
+  bool pipe_err;
   // TODO: Add your data members
 public:
-  PipeCommand(const char *cmd_line);
+  // PipeCommand(const char *cmd_line);
+  explicit PipeCommand(const string cmd_line, bool pipe_err, vector<string> args, pid_t pid = -1) : pipe_err(pipe_err), Command(cmd_line, args, pid){};
   virtual ~PipeCommand() {}
   void execute() override;
 };
