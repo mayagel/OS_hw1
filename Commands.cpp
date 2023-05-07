@@ -463,6 +463,49 @@ void ExternalCommand::execute()
     }
   }
 }
+
+void RedirectionCommand::execute()
+{
+  int stdout_copy = dup(STDOUT_FILENO);
+  close(STDOUT_FILENO);
+  int fd;
+  if (append)
+  {
+    fd = open(args[1].c_str(), O_WRONLY | O_CREAT | O_APPEND, 0655);
+  }
+  else
+  {
+    fd = open(args[1].c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0655);
+  }
+  if (fd == -1)
+  {
+    dup2(stdout_copy, STDOUT_FILENO);
+    perror("smash error: open failed");
+    throw CommandException();
+  }
+  try
+  {
+    Command *cmd = SmallShell::getInstance().CreateCommand(args[0].c_str());
+    if (!cmd)
+    {
+      dup2(stdout_copy, STDOUT_FILENO);
+      close(stdout_copy);
+      throw InvalidArguments(args[0]);
+    }
+    cmd->execute();
+    delete cmd;
+  }
+  catch (CommandException &e)
+  {
+  }
+  if (close(fd) == -1)
+  {
+    perror("smash error: close failed");
+  }
+  dup2(stdout_copy, STDOUT_FILENO);
+  close(stdout_copy);
+}
+
 /************** !!!!other-implements!!!! ******************/
 
 void JobsList::removeFinishedJobs()
