@@ -466,17 +466,34 @@ void ExternalCommand::execute()
 
 void JobsList::removeFinishedJobs()
 {
-  for (auto &[key, job] : jbs_map)
-  {
+  // for (auto &[key, job] : jbs_map)
+  // {
 
-    auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
+  //   auto wait_stat = waitpid(job.getPid(), NULL, WNOHANG);
+  //   if (wait_stat == -1)
+  //   {
+  //     perror("smash error: waitpid failed");
+  //   }
+  //   else if (wait_stat != 0)
+  //   {
+  //     jbs_map.erase(key);
+  //   }
+  // }
+
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
+  {
+    auto wait_stat = waitpid(it->second.getPid(), NULL, WNOHANG);
     if (wait_stat == -1)
     {
       perror("smash error: waitpid failed");
     }
     else if (wait_stat != 0)
     {
-      jbs_map.erase(key);
+      it = jbs_map.erase(it);
+    }
+    else
+    {
+      ++it;
     }
   }
 }
