@@ -371,7 +371,7 @@ ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid
   cout << "job id is: " << job_id << endl;
   cout << "in ExternalCommand command" << endl;
 }
-SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
+SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   cout << "in SetcoreCommand command" << endl;
   if (args.size() != 3)
@@ -384,11 +384,11 @@ SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t
   core_num = stoi(args[2]);
   if (core_num < 0 || core_num > std::thread::hardware_concurrency())
   {
-    throw InvalidCoreNumber();
+    throw InvalidCoreNumber(cmd_line);
   }
   if (SmallShell::getInstance().getJobs().getJobById(job_to_setcore) == nullptr)
   {
-    throw JobDoesNotExist();
+    throw JobDoesNotExist(cmd_line, job_to_setcore);
   }
 }
 
