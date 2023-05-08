@@ -389,6 +389,7 @@ SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t
   core_num = stoi(args[2]);
   cout << "job to setcore is: " << job_to_setcore << endl;
   cout << "core num is: " << core_num << endl;
+  cout << SmallShell::getInstance().getJobs().getJobById(job_to_setcore)->getPid() << endl;
   int max_core = std::thread::hardware_concurrency();
   cout << "max core is: " << max_core << endl;
   if (core_num < 0 || core_num > max_core)
@@ -683,6 +684,8 @@ void SetcoreCommand::execute()
   CPU_ZERO(&set);
   CPU_SET(core_num, &set);
   JobsList::JobEntry *job_ent = SmallShell::getInstance().getJobs().getJobById(job_to_setcore);
+  cout << "the pid is: " << job_ent->getPid() << endl;
+  count << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
   if (sched_setaffinity(job_ent->getPid(), sizeof(set), &set) == -1)
   {
     perror("smash error: sched_setaffinity failed");
