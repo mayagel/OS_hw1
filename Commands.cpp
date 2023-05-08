@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <fstream>
 #include <thread>
+#include <sched.h>
 
 using namespace std;
 
@@ -680,11 +681,11 @@ void SetcoreCommand::execute()
   CPU_ZERO(&set);
   CPU_SET(core_num, &set);
   JobsList::JobEntry *job_ent = SmallShell::getInstance().getJobs().getJobById(job_to_setcore);
-  cout << sched_setaffinity(job_ent->getPid(), sizeof(set), &set);
-  // {
-  //   perror("smash error: sched_setaffinity failed");
-  //   throw CommandException();
-  // }
+  if (sched_setaffinity(job_ent->getPid(), sizeof(set), &set) == -1)
+  {
+    perror("smash error: sched_setaffinity failed");
+    throw CommandException();
+  }
 }
 /************** !!!!other-implements!!!! ******************/
 
