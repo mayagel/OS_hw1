@@ -378,12 +378,13 @@ SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t
   {
     // cout << "smash error: setcore: invalid arguments" << endl;
     // return;
-    cout << "args size isnt 3" << endl;
     throw InvalidArguments(cmd_line);
   }
   job_to_setcore = stoi(args[1]);
   core_num = stoi(args[2]);
-  if (core_num < 0 || core_num > std::thread::hardware_concurrency())
+  int max_core = std::thread::hardware_concurrency();
+  cout << "max core is: " << max_core << endl;
+  if (core_num < 0 || core_num > max_core)
   {
     throw InvalidCoreNumber(cmd_line);
   }
