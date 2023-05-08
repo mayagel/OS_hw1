@@ -257,13 +257,13 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new SetcoreCommand(org_cmd, args);
   }
-  else if (args[0] == 'getfileinfo')
+  else if (args[0] == "getfileinfo")
   {
   }
-  else if (args[0] == 'chmod')
+  else if (args[0] == "chmod")
   {
   }
-  else if (args[0] == 'timeout')
+  else if (args[0] == "timeout")
   {
   }
   else
