@@ -675,7 +675,8 @@ void SetcoreCommand::execute()
   cpu_set_t set;
   CPU_ZERO(&set);
   CPU_SET(core_num, &set);
-  if (sched_setaffinity(SmallShell::getInstance().getJobs().getJobById(job_to_setcore)->getPid(), sizeof(set), &set) == -1)
+  JobsList::JobEntry *job_ent = SmallShell::getInstance().getJobs().getJobById(job_to_setcore);
+  if (sched_setaffinity(job_ent->getPid(), sizeof(set), &set) == -1)
   {
     perror("smash error: sched_setaffinity failed");
     throw CommandException();
