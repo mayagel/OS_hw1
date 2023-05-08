@@ -1,11 +1,15 @@
+#include <unistd.h>
 #include <string.h>
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <memory>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <iomanip>
 #include "Commands.h"
-#include <fcntl.h>
+#include <signal.h>
+#include <fstream>
 #include <thread>
 
 using namespace std;
