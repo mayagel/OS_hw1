@@ -378,6 +378,7 @@ SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t
   {
     // cout << "smash error: setcore: invalid arguments" << endl;
     // return;
+    cout << "args size isnt 3" << endl;
     throw InvalidArguments(cmd_line);
   }
   job_to_setcore = stoi(args[1]);
