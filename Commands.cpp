@@ -6,6 +6,7 @@
 #include <iomanip>
 #include "Commands.h"
 #include <fcntl.h>
+#include <thread>
 
 using namespace std;
 
@@ -179,7 +180,7 @@ CMD_TYPE commandType(string line, int &index)
  */
 Command *SmallShell::CreateCommand(const char *cmd_line)
 {
-  if (!cmd_line)
+  if (!cmd_line || strcmp(cmd_line, "") == 0)
     return nullptr;
   string org_cmd = string(cmd_line);
   int index = 0;
@@ -252,23 +253,33 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     return new KillCommand(org_cmd, args);
   }
-  // else if (args[0] == "setcore")
-  // {
-  //   return new SetcoreCommand(org_cmd, args);
-  // }
+  else if (args[0] == "setcore")
+  {
+    return new SetcoreCommand(org_cmd, args);
+  }
+  else if (args[0] == 'getfileinfo')
+  {
+  }
+  else if (args[0] == 'chmod')
+  {
+  }
+  else if (args[0] == 'timeout')
+  {
+  }
   else
   {
     // cout << "external commands" << endl;
     return new ExternalCommand(org_cmd, args);
   }
-  return nullptr;
+  // return nullptr;
 }
 void SmallShell::executeCommand(const char *cmd_line)
 {
 
   // TODO: Add your implementation here
   Command *cmd = CreateCommand(cmd_line);
-  cmd->execute();
+  if (cmd)
+    cmd->execute();
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
@@ -359,6 +370,26 @@ ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid
 {
   cout << "job id is: " << job_id << endl;
   cout << "in ExternalCommand command" << endl;
+}
+SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
+{
+  cout << "in SetcoreCommand command" << endl;
+  if (args.size() != 3)
+  {
+    // cout << "smash error: setcore: invalid arguments" << endl;
+    // return;
+    throw InvalidArguments();
+  }
+  job_to_setcore = stoi(args[1]);
+  core_num = stoi(args[2]);
+  if (core_num < 0 || core_num > std::thread::hardware_concurrency())
+  {
+    throw InvalidCoreNumber();
+  }
+  if (SmallShell::getInstance().getJobs().getJobById(job_to_setcore) == nullptr)
+  {
+    throw JobDoesNotExist();
+  }
 }
 
 /************** !!!!executes!!!! ******************/
@@ -455,7 +486,6 @@ void KillCommand::execute()
     cout << "signal number " << signal_num << " was sent to pid " << pid_to_kill << endl;
   }
 }
-
 void ExternalCommand::execute()
 {
   pid_t temp_pid = fork();
@@ -505,7 +535,6 @@ void ExternalCommand::execute()
     }
   }
 }
-
 void RedirectionCommand::execute()
 {
   int stdout_copy = dup(STDOUT_FILENO);
@@ -547,7 +576,6 @@ void RedirectionCommand::execute()
   dup2(stdout_copy, STDOUT_FILENO);
   close(stdout_copy);
 }
-
 void PipeCommand::execute()
 {
   int in_copy = dup(STDIN_FILENO);
@@ -640,7 +668,17 @@ void PipeCommand::execute()
     }
   }
 }
-
+void SetcoreCommand::execute()
+{
+  cpu_set_t set;
+  CPU_ZERO(&set);
+  CPU_SET(core_num, &set);
+  if (sched_setaffinity(SmallShell::getInstance().getJobs().getJobById(job_to_setcore)->getPid(), sizeof(set), &set) == -1)
+  {
+    perror("smash error: sched_setaffinity failed");
+    throw CommandException();
+  }
+}
 /************** !!!!other-implements!!!! ******************/
 
 void JobsList::removeFinishedJobs()

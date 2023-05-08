@@ -254,8 +254,11 @@ public:
 class SetcoreCommand : public BuiltInCommand
 {
   // TODO: Add your data members
+  int job_to_setcore;
+  int core_num;
+
 public:
-  SetcoreCommand(const char *cmd_line);
+  SetcoreCommand(const string cmd_line, vector<string> args, pid_t pid = -1);
   virtual ~SetcoreCommand() {}
   void execute() override;
 };
