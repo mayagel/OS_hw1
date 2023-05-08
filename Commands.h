@@ -270,7 +270,7 @@ class KillCommand : public BuiltInCommand
   int signal_num;
 
 public:
-  KillCommand(string cmd_line, vector<string> args, pid_t pid = -1);
+  KillCommand(const string cmd_line, vector<string> args, pid_t pid = -1);
   KillCommand(const char *cmd_line, JobsList *jobs);
   virtual ~KillCommand() {}
   void execute() override;
@@ -321,7 +321,7 @@ private:
   string _cmd_line;
 
 public:
-  TooManyArguments(string &cmd) : _cmd_line(cmd)
+  TooManyArguments(const string &cmd) : _cmd_line(cmd)
   {
     cerr << "smash error: " + _cmd_line + ": too many arguments" << endl;
   }
@@ -333,7 +333,7 @@ private:
   string _cmd_line;
 
 public:
-  OldPwdNotSet(string &cmd) : _cmd_line(cmd)
+  OldPwdNotSet(const string &cmd) : _cmd_line(cmd)
   {
     cerr << "smash error: " + _cmd_line + ": OLDPWD not set" << endl;
   }
@@ -345,7 +345,7 @@ private:
   string _cmd_line;
 
 public:
-  DefaultError(string &cmd) : _cmd_line(cmd)
+  DefaultError(const string &cmd) : _cmd_line(cmd)
   {
     cerr << "smash error: " + _cmd_line << endl;
   }
@@ -357,7 +357,7 @@ private:
   string _cmd_line;
 
 public:
-  JobsListIsEmpty(string &cmd) : _cmd_line(cmd)
+  JobsListIsEmpty(const string &cmd) : _cmd_line(cmd)
   {
     cerr << "smash error: " + _cmd_line + ": jobs list is empty" << endl;
   }
@@ -369,7 +369,7 @@ private:
   string _cmd_line;
 
 public:
-  InvalidArguments(string &cmd) : _cmd_line(cmd)
+  InvalidArguments(const string &cmd) : _cmd_line(cmd)
   {
     cerr << "smash error: " + _cmd_line + ": invalid arguments" << endl;
   }
@@ -382,7 +382,7 @@ private:
   int _job_id;
 
 public:
-  JobDoesNotExist(string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
+  JobDoesNotExist(const string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
   {
     cerr << "smash error: " + _cmd_line + ": job-id " << _job_id << " does not exist" << endl;
   }
@@ -395,7 +395,7 @@ private:
   int _job_id;
 
 public:
-  AlreadyRunningInBackground(string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
+  AlreadyRunningInBackground(const string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
   {
     cerr << "smash error: " + _cmd_line + ": job-id " << _job_id << " is already running in the background" << endl;
   }
@@ -407,7 +407,7 @@ private:
   string _cmd_line;
 
 public:
-  NoStopedJobs(string &cmd) : _cmd_line(cmd)
+  NoStopedJobs(const string &cmd) : _cmd_line(cmd)
   {
     cerr << "smash error: " + _cmd_line + ": there is no stopped jobs to resume" << endl;
   }
@@ -419,7 +419,7 @@ private:
   string _cmd_line;
 
 public:
-  InvalidCoreNumber(string &cmd) : _cmd_line(cmd)
+  InvalidCoreNumber(const string &cmd) : _cmd_line(cmd)
   {
     cerr << "smash error: " + _cmd_line + ": invalid core number" << endl;
   }
