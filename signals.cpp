@@ -16,6 +16,7 @@ void ctrlZHandler(int sig_num)
     SmallShell::getInstance().setCurrentCmd(nullptr);
   }
   cout << "smash: got ctrl-Z" << endl;
+  return;
 }
 
 void ctrlCHandler(int sig_num)
@@ -28,6 +29,7 @@ void ctrlCHandler(int sig_num)
     cout << "smash: process " << int(curr_cmd->getPid()) << " was killed" << endl;
     SmallShell::getInstance().setCurrentCmd(nullptr);
   }
+  return;
 }
 
 void alarmHandler(int sig_num)

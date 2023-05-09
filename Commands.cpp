@@ -330,7 +330,11 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     cout << "args size is 1" << endl;
     int res;
     SmallShell::getInstance().getJobs().getLastJob(&res);
-
+    if (!res)
+    {
+      cout << "smash error: fg: jobs list is empty" << endl;
+      throw CommandException();
+    }
     cout << "res is: " << res << endl;
     job_to_fg = res;
   }
