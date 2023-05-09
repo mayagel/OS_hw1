@@ -245,7 +245,7 @@ class GetFileTypeCommand : public BuiltInCommand
 {
 
 public:
-  GetFileTypeCommand(const string cmd_line, vector<string> args) : BuiltInCommand(cmd_line, args);
+  GetFileTypeCommand(const string cmd_line, vector<string> args);
   virtual ~GetFileTypeCommand() {}
   void execute() override;
 };
