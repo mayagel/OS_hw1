@@ -236,7 +236,7 @@ class ChmodCommand : public BuiltInCommand
 {
   // TODO: Add your data members
 public:
-  ChmodCommand(const char *cmd_line);
+  ChmodCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   virtual ~ChmodCommand() {}
   void execute() override;
 };
@@ -245,7 +245,7 @@ class GetFileTypeCommand : public BuiltInCommand
 {
 
 public:
-  GetFileTypeCommand(const string cmd_line, vector<string> args);
+  GetFileTypeCommand(const string cmd_line, vector<string> args, pid_t pid = -1);
   virtual ~GetFileTypeCommand() {}
   void execute() override;
 };

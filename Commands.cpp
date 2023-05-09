@@ -269,6 +269,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   }
   else if (args[0] == "chmod")
   {
+    return new ChmodCommand(org_cmd, args);
   }
   else if (args[0] == "timeout")
   {
@@ -846,7 +847,7 @@ void JobsList::killAllJobs()
 
 // delete thats!!!!
 
-GetFileTypeCommand::GetFileTypeCommand(const string cmd_line, vector<string> args) : BuiltInCommand(cmd_line, args)
+GetFileTypeCommand::GetFileTypeCommand(const string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   if (args.size() != 2)
   {
@@ -899,51 +900,42 @@ void GetFileTypeCommand::execute()
   cout << "and takes up " << file_info.st_size << " bytes" << endl;
 }
 
-// ChmodCommand::ChmodCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
-// {
-//   // check input validity
-//   if (this->argc != 3)
-//   {
-//     std::cerr << "smash error: chmod: invalid arguments" << std::endl;
-//     this->success = false;
-//     return;
-//   }
+ChmodCommand::ChmodCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  // check input validity
+  if (args.size() != 3)
+  {
+    throw InvalidArguments(cmd_line);
+  }
 
-//   // Parse the new mode from the command line arguments
-//   char *endptr;
-//   this->new_mode = strtol(this->argv[1], &endptr, 8);
+  // Parse the new mode from the command line arguments
+  char *endptr;
+  long new_mode = strtol(args[1].c_str(), &endptr, 8);
 
-//   // Check that the new mode was valid
-//   if (*endptr != '\0' || errno == ERANGE)
-//   {
-//     std::cerr << "smash error: chmod: invalid mode '" << this->argv[1] << "'" << std::endl;
-//     this->success = false;
-//     return;
-//   }
+  // Check that the new mode was valid
+  if (*endptr != '\0' || errno == ERANGE)
+  {
+    throw InvalidArguments(cmd_line);
+  }
 
-//   struct stat file_stat;
-//   // Retrieve the current file mode of the file
-//   if (stat(this->argv[2], &file_stat) == -1)
-//   {
-//     this->success = false;
-//     perror("smash error: stat failed");
-//     return;
-//   }
+  struct stat file_stat;
+  // Retrieve the current file mode of the file
+  if (stat(args[2].c_str(), &file_stat) == -1)
+  {
+    throw InvalidArguments(cmd_line);
+  }
+}
 
-//   this->old_mode = file_stat.st_mode;
-
-//   // Update the file mode with the new mode
-//   this->new_file_mode = (old_mode & ~07777) | new_mode;
-// }
-
-// void ChmodCommand::execute()
-// {
-//   // Set the updated file mode using chmod
-//   if (chmod(this->argv[2], this->new_file_mode) == -1)
-//   {
-//     perror("smash error: stat failed");
-//     return;
-//   }
-// }
+void ChmodCommand::execute()
+{
+  // Set the updated file mode using chmod
+  char *endptr;
+  long new_mode = strtol(args[1].c_str(), &endptr, 8);
+  if (chmod(args[2].c_str(), new_mode) == -1)
+  {
+    perror("smash error: stat failed");
+    return;
+  }
+}
 
 // until here!!!!
