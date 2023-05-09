@@ -11,9 +11,9 @@ void ctrlZHandler(int sig_num)
   if (curr_cmd)
   {
     kill(curr_cmd->getPid(), SIGSTOP);
-    SmallShell::getInstance().setCurrentCmd(nullptr);
     SmallShell::getInstance().getJobs().addJob(curr_cmd, true);
     cout << "smash: process " << int(curr_cmd->getPid()) << " was stopped" << endl;
+    SmallShell::getInstance().setCurrentCmd(nullptr);
   }
   cout << "smash: got ctrl-Z" << endl;
 }
