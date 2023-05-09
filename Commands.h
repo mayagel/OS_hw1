@@ -218,7 +218,6 @@ private:
   // TODO: Add your data members
 public:
   BackgroundCommand(string cmd_line, vector<string> args, pid_t pid = -1);
-  BackgroundCommand(const char *cmd_line, JobsList *jobs);
   virtual ~BackgroundCommand() {}
   void execute() override;
 };
@@ -244,9 +243,9 @@ public:
 
 class GetFileTypeCommand : public BuiltInCommand
 {
-  // TODO: Add your data members
+
 public:
-  GetFileTypeCommand(const char *cmd_line);
+  GetFileTypeCommand(const string cmd_line, vector<string> args) : BuiltInCommand(cmd_line, args);
   virtual ~GetFileTypeCommand() {}
   void execute() override;
 };

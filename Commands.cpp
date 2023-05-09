@@ -12,6 +12,7 @@
 #include <fstream>
 #include <thread>
 #include <sched.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -264,6 +265,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   }
   else if (args[0] == "getfileinfo")
   {
+    return new GetFileTypeCommand(org_cmd, args);
   }
   else if (args[0] == "chmod")
   {
@@ -837,3 +839,107 @@ void JobsList::killAllJobs()
     }
   }
 }
+
+// delete thats!!!!
+
+GetFileTypeCommand::GetFileTypeCommand(const string cmd_line, vector<string> args) : BuiltInCommand(cmd_line, args)
+{
+  if (args.size() != 2)
+  {
+    throw InvalidArguments(cmd_line);
+  }
+}
+
+void GetFileTypeCommand::execute()
+{
+  string path = args[1].c_str();
+
+  struct stat file_info;
+  if (stat(path.c_str(), &file_info) == -1)
+  {
+    throw InvalidArguments(cmd_str);
+  }
+  cout << path << "'s type is";
+  if (S_ISREG(file_info.st_mode))
+  {
+    std::cout << path << " \"regular file\" ";
+  }
+  else if (S_ISDIR(file_info.st_mode))
+  {
+    std::cout << path << " \"directory\" ";
+  }
+  else if (S_ISCHR(file_info.st_mode))
+  {
+    std::cout << path << " \"character device\" ";
+  }
+  else if (S_ISBLK(file_info.st_mode))
+  {
+    std::cout << path << " \"block device\" ";
+  }
+  else if (S_ISFIFO(file_info.st_mode))
+  {
+    std::cout << path << " \"FIFO\" ";
+  }
+  else if (S_ISLNK(file_info.st_mode))
+  {
+    std::cout << path << " \"symbolic link\" ";
+  }
+  else if (S_ISSOCK(file_info.st_mode))
+  {
+    std::cout << path << " \"socket\" ";
+  }
+  else
+  {
+    std::cout << path << " is of unknown type.\n";
+  }
+  cout << "and takes up " << file_info.st_size << " bytes" << endl;
+}
+
+// ChmodCommand::ChmodCommand(const char *cmd_line) : BuiltInCommand(cmd_line)
+// {
+//   // check input validity
+//   if (this->argc != 3)
+//   {
+//     std::cerr << "smash error: chmod: invalid arguments" << std::endl;
+//     this->success = false;
+//     return;
+//   }
+
+//   // Parse the new mode from the command line arguments
+//   char *endptr;
+//   this->new_mode = strtol(this->argv[1], &endptr, 8);
+
+//   // Check that the new mode was valid
+//   if (*endptr != '\0' || errno == ERANGE)
+//   {
+//     std::cerr << "smash error: chmod: invalid mode '" << this->argv[1] << "'" << std::endl;
+//     this->success = false;
+//     return;
+//   }
+
+//   struct stat file_stat;
+//   // Retrieve the current file mode of the file
+//   if (stat(this->argv[2], &file_stat) == -1)
+//   {
+//     this->success = false;
+//     perror("smash error: stat failed");
+//     return;
+//   }
+
+//   this->old_mode = file_stat.st_mode;
+
+//   // Update the file mode with the new mode
+//   this->new_file_mode = (old_mode & ~07777) | new_mode;
+// }
+
+// void ChmodCommand::execute()
+// {
+//   // Set the updated file mode using chmod
+//   if (chmod(this->argv[2], this->new_file_mode) == -1)
+//   {
+//     perror("smash error: stat failed");
+//     return;
+//   }
+// }
+
+// until here!!!!
