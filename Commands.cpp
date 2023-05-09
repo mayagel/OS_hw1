@@ -862,35 +862,35 @@ void GetFileTypeCommand::execute()
   cout << path << "'s type is";
   if (S_ISREG(file_info.st_mode))
   {
-    std::cout << path << " \"regular file\" ";
+    std::cout << " \"regular file\" ";
   }
   else if (S_ISDIR(file_info.st_mode))
   {
-    std::cout << path << " \"directory\" ";
+    std::cout << " \"directory\" ";
   }
   else if (S_ISCHR(file_info.st_mode))
   {
-    std::cout << path << " \"character device\" ";
+    std::cout << " \"character device\" ";
   }
   else if (S_ISBLK(file_info.st_mode))
   {
-    std::cout << path << " \"block device\" ";
+    std::cout << " \"block device\" ";
   }
   else if (S_ISFIFO(file_info.st_mode))
   {
-    std::cout << path << " \"FIFO\" ";
+    std::cout << " \"FIFO\" ";
   }
   else if (S_ISLNK(file_info.st_mode))
   {
-    std::cout << path << " \"symbolic link\" ";
+    std::cout << " \"symbolic link\" ";
   }
   else if (S_ISSOCK(file_info.st_mode))
   {
-    std::cout << path << " \"socket\" ";
+    std::cout << " \"socket\" ";
   }
   else
   {
-    std::cout << path << " is of unknown type.\n";
+    std::cout << " is of unknown type.\n";
   }
   cout << "and takes up " << file_info.st_size << " bytes" << endl;
 }
