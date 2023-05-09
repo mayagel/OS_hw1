@@ -25,8 +25,8 @@ void ctrlCHandler(int sig_num)
   if (curr_cmd)
   {
     kill(curr_cmd->getPid(), SIGINT);
-    SmallShell::getInstance().setCurrentCmd(nullptr);
     cout << "smash: process " << int(curr_cmd->getPid()) << " was killed" << endl;
+    SmallShell::getInstance().setCurrentCmd(nullptr);
   }
 }
 
