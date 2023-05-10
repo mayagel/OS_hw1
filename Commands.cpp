@@ -414,7 +414,6 @@ BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t
 
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in QuitCommand command" << endl;
 }
 
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
@@ -532,10 +531,12 @@ void BackgroundCommand::execute()
 
 void QuitCommand::execute()
 {
-
+  SmallShell::getInstance().getJobs().removeFinishedJobs();
   if (args.size() > 1 && args[1] == "kill")
   {
-    cout << "you chose to kill all jobs" << endl;
+    cout << "sending SIGKILL signal to " << SmallShell::getInstance().getJobs().jbs_map.size() << "jobs" << endl;
+    // print jobs to kill
+
     SmallShell::getInstance().getJobs().killAllJobs();
   }
   cout << "exit" << endl;
@@ -813,6 +814,17 @@ void JobsList::printJobsList()
       cout << " (stopped)";
     }
     cout << endl;
+  }
+}
+
+void JobsList::killprintJobsList()
+{
+  removeFinishedJobs();
+  for (auto &[key, job] : jbs_map)
+  {
+    time_t now = time(NULL);
+    // int seconds = difftime(now, job.getStartTime());
+    cout << job.getPid() << ": " << job.getCommand() << endl;
   }
 }
 

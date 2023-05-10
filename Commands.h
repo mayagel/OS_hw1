@@ -137,7 +137,6 @@ class QuitCommand : public BuiltInCommand
   // TODO: Add your data members
 public:
   QuitCommand(string cmd_line, vector<string> args, pid_t pid = -1);
-  QuitCommand(const char *cmd_line, JobsList *jobs);
   virtual ~QuitCommand() {}
   void execute() override;
 };
@@ -166,7 +165,7 @@ public:
     time_t getStartTime() const { return start_time; }
   };
   map<int, JobEntry> jbs_map;
-  // TODO: Add your data members
+
 public:
   JobsList();
   ~JobsList() = default;
@@ -178,7 +177,7 @@ public:
   void removeJobById(int jobId);
   JobEntry *getLastJob(int *lastJobId);
   JobEntry *getLastStoppedJob(int *jobId);
-  // TODO: Add extra methods or modify exisitng ones as needed
+  void killprintJobsList();
 };
 
 class JobsCommand : public BuiltInCommand
