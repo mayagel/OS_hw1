@@ -89,10 +89,7 @@ private:
   string prompt;
 
 public:
-  chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
-  {
-    prompt = args.size() > 1 ? args[1] : string("smash");
-  };
+  chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid);
   virtual ~chpromptCommand(){};
   void execute() override;
 };
@@ -100,10 +97,11 @@ public:
 class ChangeDirCommand : public BuiltInCommand
 {
 private:
+  string new_path;
+
 public:
   // TODO: Add your data members public:
   ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid = -1);
-  ChangeDirCommand(const char *cmd_line, char **plastPwd);
   virtual ~ChangeDirCommand() {}
   void execute() override;
 };
@@ -126,11 +124,7 @@ private:
   pid_t smash_pid;
 
 public:
-  ShowPidCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid)
-  {
-    std::cout << "in constructor shotpidcommand\n";
-    // smash_pid = SmallShell::getInstance().getPidSmash();
-  };
+  ShowPidCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   ShowPidCommand(const char *cmd_line);
   virtual ~ShowPidCommand() {}
   void execute() override;
@@ -282,6 +276,7 @@ private:
   Command *curr_cmd;
   std::string smash_name;
   JobsList jobs_list;
+  string last_wd;
   SmallShell();
 
 public:
@@ -309,6 +304,8 @@ public:
   Command *getCurrentCmd() { return curr_cmd; };
   void removeJobById(int jobId);
   // TODO: add extra methods as needed
+  string getLastWd(){return last_wd};
+  void setLastWd(string new_last_wd) { last_wd = new_last_wd; };
 };
 
 class CommandException : public std::exception
@@ -317,24 +314,24 @@ class CommandException : public std::exception
 class TooManyArguments : public CommandException
 {
 private:
-  string _cmd_line;
+  string cmd_line;
 
 public:
-  TooManyArguments(const string &cmd) : _cmd_line(cmd)
+  TooManyArguments(const string &cmd) : cmd_line(cmd)
   {
-    cerr << "smash error: " + _cmd_line + ": too many arguments" << endl;
+    cerr << "smash error: " << cmd_line << ": too many arguments" << endl;
   }
 };
 
 class OldPwdNotSet : public CommandException
 {
 private:
-  string _cmd_line;
+  string cmd_line;
 
 public:
-  OldPwdNotSet(const string &cmd) : _cmd_line(cmd)
+  OldPwdNotSet(const string &cmd) : cmd_line(cmd)
   {
-    cerr << "smash error: " + _cmd_line + ": OLDPWD not set" << endl;
+    cerr << "smash error: " << cmd_line << ": OLDPWD not set" << endl;
   }
 };
 

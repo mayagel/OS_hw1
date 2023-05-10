@@ -145,7 +145,7 @@ void _removeBackgroundSign(string &cmd_line)
 
 /************** !!!!SmallShell implements!!!! ******************/
 
-SmallShell::SmallShell() : smash_name("smash"), jobs_list()
+SmallShell::SmallShell() : smash_name("smash"), jobs_list(), last_wd(""), curr_cmd(nullptr)
 {
   // cout << "smash: " << smash_name << "> " << endl;
 }
@@ -305,19 +305,35 @@ void SmallShell::removeJobById(int jobId)
 
 /************** !!!!constructors!!!! ******************/
 
+chpromptCommand::chpromptCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  prompt = args.size() > 1 ? args[1] : string("smash");
+};
+
+ShowPidCommand::ShowPidCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
+{
+  smash_pid = SmallShell::getInstance().getPidSmash();
+}
+
 GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  // if (!getcwd())
-  // {
-  //   return nullptr;
-  // }
+  if (!getcwd(NULL, 0))
+  {
+    throw CommandException();
+  }
   pwd = getcwd(NULL, 0);
-  // cout << getcwd(NULL, 0) << endl;
 }
 ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  chdir(args[1].c_str()); // maybe need pay attention to leak
-  // handeling error at the ends!
+  if (args.size() > 2)
+  {
+    throw TooManyArguments(args[0]);
+  }
+  new_path = args[1];
+  if (new_path == "-" && SmallShell::getInstance().getLastWd() == "")
+  {
+    throw OldPwdNotSet(args[0]);
+  }
 }
 JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -421,15 +437,19 @@ void chpromptCommand::execute()
 void ShowPidCommand::execute()
 {
 
-  cout << "smash pid is " << SmallShell::getInstance().getPidSmash() << endl;
+  cout << "smash pid is " << smash_pid << endl;
+  // cout << "smash pid is " << SmallShell::getInstance().getPidSmash() << endl;
   // SmallShell::getInstance().setPrompt(this->prompt);
 }
+
 void GetCurrDirCommand::execute()
 {
   cout << pwd << endl;
 }
 void ChangeDirCommand::execute()
 {
+  SmallShell::getInstance().setLastWd(getcwd(NULL, 0));
+  chdir(new_path.c_str());
 }
 void JobsCommand::execute()
 {
