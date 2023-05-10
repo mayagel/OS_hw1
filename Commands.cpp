@@ -360,7 +360,7 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     cout << "res is: " << res << endl;
     job_to_fg = res;
   }
-  else if (args.size() == 2)
+  else
   {
     try
     {
