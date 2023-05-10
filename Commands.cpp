@@ -285,8 +285,6 @@ void SmallShell::executeCommand(const char *cmd_line)
     Command *cmd = CreateCommand(cmd_line);
     if (cmd)
       cmd->execute();
-
-    delete cmd;
   }
   catch (CommandException &e)
   {
