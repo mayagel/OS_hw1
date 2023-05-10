@@ -272,7 +272,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   }
   else
   {
-    // cout << "external commands" << endl;
+    // external commands
     return new ExternalCommand(org_cmd, args);
   }
   // return nullptr;
@@ -280,18 +280,17 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
 
 void SmallShell::executeCommand(const char *cmd_line)
 {
-
-  // TODO: Add your implementation here
   try
   {
     Command *cmd = CreateCommand(cmd_line);
     if (cmd)
       cmd->execute();
+
+    delete cmd;
   }
   catch (CommandException &e)
   {
   }
-  // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
 void SmallShell::printJobs()
@@ -428,6 +427,7 @@ ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid
   cout << "job id is: " << job_id << endl;
   cout << "in ExternalCommand command" << endl;
 }
+
 SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   cout << "in SetcoreCommand command" << endl;
