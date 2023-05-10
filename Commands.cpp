@@ -355,7 +355,6 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     SmallShell::getInstance().getJobs().getLastJob(&res);
     if (res == -1)
     {
-      // perror("smash error: fg: jobs list is empty");
       throw DefaultError("fg: jobs list is empty");
     }
     cout << "res is: " << res << endl;
@@ -363,8 +362,6 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
   }
   else if (args.size() == 2)
   {
-    // cout << "args size is 2" << endl;
-    // check if valid
     try
     {
       job_to_fg = stoi(args[1]);
@@ -374,8 +371,8 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
       throw InvalidArguments(args[0]);
     }
   }
-  else
-    throw InvalidArguments(args[0]);
+  // else
+  //   throw InvalidArguments(args[0]);
 }
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -478,9 +475,11 @@ void ForegroundCommand::execute()
 {
   JobsList::JobEntry *the_job = SmallShell::getInstance().getJobs().getJobById(job_to_fg);
   if (the_job == nullptr)
-  {
     throw JobDoesNotExist(cmd_str, job_to_fg);
-  }
+
+  if (args.size() > 2)
+    throw InvalidArguments(args[0]);
+
   Command *cmd = SmallShell::getInstance().getJobs().getJobById(job_to_fg)->getCmd();
   if (the_job->isStopped())
   {
