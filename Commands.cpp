@@ -181,6 +181,7 @@ CMD_TYPE commandType(string line, int &index)
   }
   return REGULAR;
 }
+
 /**
  * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
  */
@@ -276,6 +277,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   }
   // return nullptr;
 }
+
 void SmallShell::executeCommand(const char *cmd_line)
 {
 
@@ -324,6 +326,7 @@ GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t
   }
   pwd = getcwd(NULL, 0);
 }
+
 ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   if (args.size() > 2)
@@ -344,9 +347,11 @@ ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t p
     new_path = SmallShell::getInstance().getLastWd();
   }
 }
+
 JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
 }
+
 ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   if (args.size() == 1)
@@ -366,7 +371,7 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     {
       job_to_fg = stoi(args[1]);
     }
-    catch (std::invalid_argument &e)
+    catch (std::exception &e)
     {
       throw InvalidArguments(args[0]);
     }
@@ -374,31 +379,43 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
   // else
   //   throw InvalidArguments(args[0]);
 }
+
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  // cout << "in BackgroundCommand command" << endl;
   if (args.size() == 1)
   {
-    // cout << "args size is 1" << endl;
     int res;
-    SmallShell::getInstance().getJobs().getLastStoppedJob(&res);
-
-    // cout << "res is: " << res << endl;
-    job_to_bg = res;
+    if (SmallShell::getInstance().getJobs().getLastStoppedJob(&res))
+      job_to_bg = res;
+    else
+      throw NoStopedJobs(args[0]);
   }
   else if (args.size() == 2)
   {
-    // cout << "args size is 2" << endl;
-    // check if valid
-    job_to_bg = stoi(args[1]);
-  }
+    try
+    {
+      job_to_bg = stoi(args[1]);
+    }
+    catch (std::exception &e)
+    {
+      throw InvalidArguments(args[0]);
+    }
 
-  // cout << "after BackgroundCommand command" << endl;
+    if (!SmallShell::getInstance().getJobs().getJobById(job_to_bg))
+      throw JobDoesNotExist(args[0], job_to_bg);
+
+    if (!SmallShell::getInstance().getJobs().getJobById(job_to_bg)->isStopped())
+      throw AlreadyRunningInBackground(args[0], job_to_bg);
+  }
+  else
+    throw InvalidArguments(args[0]);
 }
+
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   cout << "in QuitCommand command" << endl;
 }
+
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
   signal_num = stoi(args[1].substr(1));
@@ -471,11 +488,12 @@ void JobsCommand::execute()
 {
   SmallShell::getInstance().printJobs();
 }
+
 void ForegroundCommand::execute()
 {
   JobsList::JobEntry *the_job = SmallShell::getInstance().getJobs().getJobById(job_to_fg);
   if (the_job == nullptr)
-    throw JobDoesNotExist(cmd_str, job_to_fg);
+    throw JobDoesNotExist(args[0], job_to_fg);
 
   if (args.size() > 2)
     throw InvalidArguments(args[0]);
@@ -498,16 +516,16 @@ void ForegroundCommand::execute()
   }
   SmallShell::getInstance().setCurrentCmd(nullptr);
 }
+
 void BackgroundCommand::execute()
 {
-  cout << "in BackgroundCommand execute" << endl;
-  cout << "job id is: " << job_to_bg << endl;
-  cout << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getCommand() << " : " << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid() << endl;
+  cout << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getCommand()
+       << " : " << SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid() << endl;
   SmallShell::getInstance().getJobs().getJobById(job_to_bg)->setStopped(false);
-  cout << "in BackgroundCommand execute" << endl;
+
   if (kill(SmallShell::getInstance().getJobs().getJobById(job_to_bg)->getPid(), SIGCONT) == -1)
   {
-    cout << "smash error: kill failed" << endl;
+    perror("smash error: kill failed");
   }
 }
 void QuitCommand::execute()

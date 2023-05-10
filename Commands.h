@@ -398,12 +398,12 @@ public:
 class NoStopedJobs : public CommandException
 {
 private:
-  string _cmd_line;
+  string cmd_line;
 
 public:
-  NoStopedJobs(const string &cmd) : _cmd_line(cmd)
+  NoStopedJobs(const string &cmd) : cmd_line(cmd)
   {
-    cerr << "smash error: " + _cmd_line + ": there is no stopped jobs to resume" << endl;
+    cerr << "smash error: " << cmd_line << ": there is no stopped jobs to resume" << endl;
   }
 };
 
