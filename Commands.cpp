@@ -194,11 +194,6 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   vector<string> args;
   if (cmd_type == REDIRECTION || cmd_type == REDIRECTION_APPEND)
   {
-    // if (!_parseCommandLine(org_cmd.substr(0, index) +
-    //                        org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()) args))
-    // {
-    //   return nullptr;
-    // }
     args.push_back(org_cmd.substr(0, index));
     args.push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
     return new RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
@@ -285,9 +280,15 @@ void SmallShell::executeCommand(const char *cmd_line)
 {
 
   // TODO: Add your implementation here
-  Command *cmd = CreateCommand(cmd_line);
-  if (cmd)
-    cmd->execute();
+  try
+  {
+    Command *cmd = CreateCommand(cmd_line);
+    if (cmd)
+      cmd->execute();
+  }
+  catch (CommandException &e)
+  {
+  }
   // Please note that you must fork smash process for some commands (e.g., external commands....)
 }
 
@@ -328,6 +329,10 @@ ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t p
   if (args.size() > 2)
   {
     throw TooManyArguments(args[0]);
+  }
+  if (args.size() < 2)
+  {
+    throw DefaultError(cmd_str);
   }
   new_path = args[1];
   if (new_path == "-" && SmallShell::getInstance().getLastWd() == "")
