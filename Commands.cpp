@@ -334,6 +334,10 @@ ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t p
   {
     throw OldPwdNotSet(args[0]);
   }
+  else if (new_path == "-")
+  {
+    new_path = SmallShell::getInstance().getLastWd();
+  }
 }
 JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
