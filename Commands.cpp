@@ -606,7 +606,7 @@ void ExternalCommand::execute()
       SmallShell::getInstance().setCurrentCmd(this);
       waitpid(temp_pid, NULL, WUNTRACED);
       SmallShell::getInstance().setCurrentCmd();
-      delete this;
+      // delete this;
 
       // need to delete ?
     }
