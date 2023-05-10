@@ -89,7 +89,7 @@ private:
   string prompt;
 
 public:
-  chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1) : BuiltInCommand(cmd_line, args, pid);
+  chpromptCommand(string cmd_line, vector<string> args, pid_t pid = -1);
   virtual ~chpromptCommand(){};
   void execute() override;
 };
@@ -304,7 +304,7 @@ public:
   Command *getCurrentCmd() { return curr_cmd; };
   void removeJobById(int jobId);
   // TODO: add extra methods as needed
-  string getLastWd(){return last_wd};
+  string getLastWd() { return last_wd; };
   void setLastWd(string new_last_wd) { last_wd = new_last_wd; };
 };
 
