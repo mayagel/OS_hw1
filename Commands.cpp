@@ -285,6 +285,9 @@ void SmallShell::executeCommand(const char *cmd_line)
     Command *cmd = CreateCommand(cmd_line);
     if (cmd)
       cmd->execute();
+
+    BuiltInCommand *tmp_cmd = dynamic_cast<BuiltInCommand *>(cmd);
+    delete tmp_cmd;
   }
   catch (CommandException &e)
   {
@@ -422,8 +425,6 @@ KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 
 ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid) : Command(cmd_line, args, pid)
 {
-  cout << "job id is: " << job_id << endl;
-  cout << "in ExternalCommand command" << endl;
 }
 
 SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
@@ -459,7 +460,6 @@ void chpromptCommand::execute()
   // cout << this->prompt << endl;
   // cout << SmallShell::getInstance().getPrompt() << endl;
   SmallShell::getInstance().setPrompt(this->prompt);
-  // cout << SmallShell::getInstance().getPrompt() << endl;
 }
 void ShowPidCommand::execute()
 {
@@ -576,7 +576,7 @@ void ExternalCommand::execute()
       if (execl("/bin/bash", "/bin/bash", "-c", cmd_str.c_str(), NULL) == -1)
       {
         perror("smash error: execl failed");
-        exit(1);
+        // exit(1);
       }
     }
     else
@@ -590,7 +590,7 @@ void ExternalCommand::execute()
       if (execvp(args[0].c_str(), char_args.data()) == -1)
       {
         perror("smash error: execl failed");
-        exit(1);
+        // exit(1);
       }
     }
   }
@@ -599,10 +599,6 @@ void ExternalCommand::execute()
     this->pid = temp_pid;
     if (_isBackgroundComamnd(cmd_str))
     {
-      // cout << "add background command to list" << endl;
-      cout << "pid is: " << temp_pid << endl;
-      cout << "cmd is: " << cmd_str << endl;
-      cout << "job id is: " << this->getJobId() << endl;
       SmallShell::getInstance().getJobs().addJob(this, false);
     }
     else
@@ -610,6 +606,9 @@ void ExternalCommand::execute()
       SmallShell::getInstance().setCurrentCmd(this);
       waitpid(temp_pid, NULL, WUNTRACED);
       SmallShell::getInstance().setCurrentCmd();
+      delete this;
+
+      // need to delete ?
     }
   }
 }
@@ -794,6 +793,7 @@ void JobsList::removeFinishedJobs()
     }
     else
     {
+      delete it->second.getCmd();
       it = jbs_map.erase(it);
     }
   }
