@@ -199,7 +199,6 @@ class ForegroundCommand : public BuiltInCommand
 
 public:
   ForegroundCommand(string cmd_line, vector<string> args, pid_t pid = -1);
-  ForegroundCommand(const char *cmd_line, JobsList *jobs);
   virtual ~ForegroundCommand() {}
   void execute() override;
 };
@@ -373,13 +372,13 @@ public:
 class JobDoesNotExist : public CommandException
 {
 private:
-  string _cmd_line;
-  int _job_id;
+  string cmd_line;
+  int job_id;
 
 public:
-  JobDoesNotExist(const string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
+  JobDoesNotExist(const string cmd, int job_id) : cmd_line(cmd), job_id(job_id)
   {
-    cerr << "smash error: " + _cmd_line + ": job-id " << _job_id << " does not exist" << endl;
+    cerr << "smash error: " << cmd_line << ": job-id " << job_id << " does not exist" << endl;
   }
 };
 

@@ -320,7 +320,7 @@ GetCurrDirCommand::GetCurrDirCommand(string cmd_line, vector<string> args, pid_t
 {
   if (!getcwd(NULL, 0))
   {
-    throw CommandException();
+    throw DefaultError(cmd_str);
   }
   pwd = getcwd(NULL, 0);
 }
@@ -352,12 +352,11 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
   // cout << "in ForegroundCommand command" << endl;
   if (args.size() == 1)
   {
-    cout << "args size is 1" << endl;
     int res;
     SmallShell::getInstance().getJobs().getLastJob(&res);
     if (!res)
     {
-      cout << "smash error: fg: jobs list is empty" << endl;
+      perror("smash error: fg: jobs list is empty");
       throw CommandException();
     }
     cout << "res is: " << res << endl;
@@ -367,7 +366,14 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
   {
     // cout << "args size is 2" << endl;
     // check if valid
-    job_to_fg = stoi(args[1]);
+    try
+    {
+      job_to_fg = stoi(args[1]);
+    }
+    catch (std::invalid_argument &e)
+    {
+      throw InvalidArguments(args[0]);
+    }
   }
 }
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
@@ -471,6 +477,10 @@ void ForegroundCommand::execute()
 {
   Command *cmd = SmallShell::getInstance().getJobs().getJobById(job_to_fg)->getCmd();
   JobsList::JobEntry *the_job = SmallShell::getInstance().getJobs().getJobById(job_to_fg);
+  if (the_job == nullptr)
+  {
+    throw JobDoesNotExist(cmd_str, job_to_fg);
+  }
   if (the_job->isStopped())
   {
     // the_job->setStopped(false);
@@ -486,9 +496,7 @@ void ForegroundCommand::execute()
   {
     perror("smash error: waitpid failed");
   }
-  // SmallShell::getInstance().setCurrentCmdPid(-1);
   SmallShell::getInstance().setCurrentCmd(nullptr);
-  // SmallShell::getInstance().setCurrentJobId(-1);
 }
 void BackgroundCommand::execute()
 {
@@ -854,6 +862,11 @@ JobsList::JobEntry::JobEntry(int id, bool isStopped, Command *cmd) : job_id(id),
 
 JobsList::JobEntry *JobsList::getJobById(int jobId)
 {
+  if (jbs_map.count(jobId) == 0)
+  {
+    return nullptr;
+  }
+
   return &jbs_map.at(jobId);
 }
 
