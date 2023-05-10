@@ -171,7 +171,7 @@ public:
   ~JobsList() = default;
   void addJob(Command *cmd, bool isStopped = false);
   void printJobsList();
-  void killAllJobs();
+  void killAllJobs(bool print = true);
   void removeFinishedJobs();
   JobEntry *getJobById(int jobId);
   void removeJobById(int jobId);

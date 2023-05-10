@@ -537,7 +537,7 @@ void QuitCommand::execute()
     cout << "sending SIGKILL signal to " << SmallShell::getInstance().getJobs().jbs_map.size() << "jobs" << endl;
     // print jobs to kill
     SmallShell::getInstance().getJobs().killprintJobsList();
-    SmallShell::getInstance().getJobs().killAllJobs();
+    SmallShell::getInstance().getJobs().killAllJobs(false);
   }
   cout << "exit" << endl;
   exit(0);
@@ -906,7 +906,7 @@ void JobsList::removeJobById(int jobId)
   jbs_map.erase(jobId);
 }
 
-void JobsList::killAllJobs()
+void JobsList::killAllJobs(bool print)
 {
   for (auto &[key, job] : jbs_map)
   {
@@ -914,7 +914,7 @@ void JobsList::killAllJobs()
     {
       perror("smash error: kill failed");
     }
-    else
+    else if (print)
     {
       cout << "signal number " << SIGKILL << " was sent to pid " << job.getPid() << endl;
     }
