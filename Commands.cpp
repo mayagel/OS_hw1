@@ -390,7 +390,7 @@ BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t
     else
       throw NoStopedJobs(args[0]);
   }
-  else if (args.size() == 2)
+  else
   {
     try
     {
@@ -406,9 +406,10 @@ BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t
 
     if (!SmallShell::getInstance().getJobs().getJobById(job_to_bg)->isStopped())
       throw AlreadyRunningInBackground(args[0], job_to_bg);
+
+    if (args.size() > 2)
+      throw InvalidArguments(args[0]);
   }
-  else
-    throw InvalidArguments(args[0]);
 }
 
 QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
@@ -528,6 +529,7 @@ void BackgroundCommand::execute()
     perror("smash error: kill failed");
   }
 }
+
 void QuitCommand::execute()
 {
 
@@ -539,6 +541,7 @@ void QuitCommand::execute()
   cout << "exit" << endl;
   exit(0);
 }
+
 void KillCommand::execute()
 {
   JobsList::JobEntry *job = SmallShell::getInstance().getJobs().getJobById(job_to_kill);
@@ -561,6 +564,7 @@ void KillCommand::execute()
     cout << "signal number " << signal_num << " was sent to pid " << pid_to_kill << endl;
   }
 }
+
 void ExternalCommand::execute()
 {
   pid_t temp_pid = fork();
@@ -610,6 +614,7 @@ void ExternalCommand::execute()
     }
   }
 }
+
 void RedirectionCommand::execute()
 {
   int stdout_copy = dup(STDOUT_FILENO);
@@ -651,6 +656,7 @@ void RedirectionCommand::execute()
   dup2(stdout_copy, STDOUT_FILENO);
   close(stdout_copy);
 }
+
 void PipeCommand::execute()
 {
   int in_copy = dup(STDIN_FILENO);
@@ -743,6 +749,7 @@ void PipeCommand::execute()
     }
   }
 }
+
 void SetcoreCommand::execute()
 {
   cpu_set_t set;
