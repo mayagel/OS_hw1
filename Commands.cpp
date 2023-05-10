@@ -355,8 +355,8 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     SmallShell::getInstance().getJobs().getLastJob(&res);
     if (res == -1)
     {
-      perror("smash error: fg: jobs list is empty");
-      throw CommandException();
+      // perror("smash error: fg: jobs list is empty");
+      throw DefaultError("fg: jobs list is empty");
     }
     cout << "res is: " << res << endl;
     job_to_fg = res;
@@ -374,6 +374,8 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
       throw InvalidArguments(args[0]);
     }
   }
+  else
+    throw InvalidArguments(args[0]);
 }
 BackgroundCommand::BackgroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -474,12 +476,12 @@ void JobsCommand::execute()
 }
 void ForegroundCommand::execute()
 {
-  Command *cmd = SmallShell::getInstance().getJobs().getJobById(job_to_fg)->getCmd();
   JobsList::JobEntry *the_job = SmallShell::getInstance().getJobs().getJobById(job_to_fg);
   if (the_job == nullptr)
   {
     throw JobDoesNotExist(cmd_str, job_to_fg);
   }
+  Command *cmd = SmallShell::getInstance().getJobs().getJobById(job_to_fg)->getCmd();
   if (the_job->isStopped())
   {
     // the_job->setStopped(false);
@@ -731,7 +733,7 @@ void SetcoreCommand::execute()
   CPU_SET(core_num, &set);
   JobsList::JobEntry *job_ent = SmallShell::getInstance().getJobs().getJobById(job_to_setcore);
   cout << "the pid is: " << job_ent->getPid() << endl;
-  cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+  // cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
   if (sched_setaffinity(job_ent->getPid(), sizeof(set), &set) == -1)
   {
     perror("smash error: sched_setaffinity failed");
