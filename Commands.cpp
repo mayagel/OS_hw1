@@ -341,7 +341,6 @@ ChangeDirCommand::ChangeDirCommand(string cmd_line, vector<string> args, pid_t p
 }
 JobsCommand::JobsCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  // cout << "in JobsCommand command" << endl;
 }
 ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
@@ -452,8 +451,12 @@ void GetCurrDirCommand::execute()
 }
 void ChangeDirCommand::execute()
 {
-  SmallShell::getInstance().setLastWd(getcwd(NULL, 0));
-  chdir(new_path.c_str());
+  string temp = getcwd(NULL, 0);
+  if (chdir(new_path.c_str()) == -1)
+  {
+    throw DefaultError(cmd_str);
+  }
+  SmallShell::getInstance().setLastWd(temp);
 }
 void JobsCommand::execute()
 {

@@ -186,7 +186,6 @@ class JobsCommand : public BuiltInCommand
   // TODO: Add your data members
 public:
   JobsCommand(string cmd_line, vector<string> args, pid_t pid = -1);
-  JobsCommand(const char *cmd_line, JobsList *jobs);
   virtual ~JobsCommand() {}
   void execute() override;
 };
@@ -338,12 +337,12 @@ public:
 class DefaultError : public CommandException
 {
 private:
-  string _cmd_line;
+  string cmd_line;
 
 public:
-  DefaultError(const string &cmd) : _cmd_line(cmd)
+  DefaultError(const string &cmd) : cmd_line(cmd)
   {
-    cerr << "smash error: " + _cmd_line << endl;
+    cerr << "smash error: " << cmd_line << endl;
   }
 };
 
