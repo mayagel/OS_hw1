@@ -585,12 +585,14 @@ void ExternalCommand::execute()
       for (auto &arg : args)
       {
         char_args.push_back((char *)arg.c_str());
+        cout << arg << endl;
       }
       char_args.push_back(NULL);
+
       if (execvp(args[0].c_str(), char_args.data()) == -1)
       {
         perror("smash error: execl failed");
-        // exit(1);
+        exit(1);
       }
     }
   }
