@@ -576,23 +576,29 @@ void ExternalCommand::execute()
       if (execl("/bin/bash", "/bin/bash", "-c", cmd_str.c_str(), NULL) == -1)
       {
         perror("smash error: execl failed");
-        // exit(1);
+        exit(1);
       }
     }
     else
     {
-      vector<char *> char_args;
-      for (auto &arg : args)
+      char *char_args[20];
+      for (int i = 0; i < args.size(); i++)
       {
-        char_args.push_back((char *)arg.c_str());
-        cout << arg << endl;
+        char_args[i] = new char[args[i].length() + 1];
+        strcpy(char_args[i], args[i].c_str());
       }
-      char_args.push_back(NULL);
-
-      if (execvp(args[0].c_str(), char_args.data()) == -1)
+      if (execvp(args[0].c_str(), char_args) == -1)
       {
+        for (int i = 0; i < args.size(); i++)
+        {
+          delete char_args[i];
+        }
         perror("smash error: execl failed");
         exit(1);
+      }
+      for (int i = 0; i < args.size(); i++)
+      {
+        delete char_args[i];
       }
     }
   }
