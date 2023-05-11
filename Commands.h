@@ -138,7 +138,7 @@ class QuitCommand : public BuiltInCommand
   // TODO: Add your data members
 public:
   QuitCommand(string cmd_line, vector<string> args, pid_t pid = -1);
-  virtual ~QuitCommand() {}
+  virtual ~QuitCommand() { exit(0); };
   void execute() override;
 };
 

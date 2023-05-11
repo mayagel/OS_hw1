@@ -581,8 +581,9 @@ void QuitCommand::execute()
     SmallShell::getInstance().getJobs().killprintJobsList();
     SmallShell::getInstance().getJobs().killAllJobs(false);
   }
+  this->~QuitCommand();
   // SmallShell::getInstance().~SmallShell();
-  exit(0);
+  // exit(0);
 }
 
 void KillCommand::execute()
