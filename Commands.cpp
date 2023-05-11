@@ -418,17 +418,19 @@ QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  try
+  if (args.size() == 3)
   {
-    signal_num = stoi(args[1].substr(1));
-    job_to_kill = stoi(args[2]);
-  }
-  catch (const std::exception &e)
-  {
-    throw InvalidArguments(args[0]);
-  }
+    try
+    {
+      signal_num = stoi(args[1].substr(1));
+      job_to_kill = stoi(args[2]);
+    }
+    catch (const std::exception &e)
+    {
 
-  cout << "in KillCommand command" << endl;
+      throw InvalidArguments(args[0]);
+    }
+  }
 }
 
 ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid) : Command(cmd_line, args, pid)
@@ -555,7 +557,7 @@ void KillCommand::execute()
   {
     throw JobDoesNotExist(args[0], job_to_kill);
   }
-  if (args.size() > 3)
+  if (args.size() != 3)
   {
     throw InvalidArguments(args[0]);
   }
@@ -598,25 +600,27 @@ void ExternalCommand::execute()
     }
     else
     {
-      char *char_args[20];
-      for (int i = 0; i < args.size(); i++)
+      vector<char *> char_args;
+      for (auto &arg : args)
       {
-        char_args[i] = new char[args[i].length() + 1];
-        strcpy(char_args[i], args[i].c_str());
+        char_args.push_back((char *)arg.c_str());
+        // char_args[i] = new char[args[i].length() + 1];
+        // strcpy(char_args[i], args[i].c_str());
       }
-      if (execvp(args[0].c_str(), char_args) == -1) // i think its shoulnd be execvp (maybe execv)
+      char_args.push_back(NULL);
+      if (execvp(args[0].c_str(), char_args.data()) == -1) // i think its shoulnd be execvp (maybe execv)
       {
-        for (int i = 0; i < args.size(); i++)
-        {
-          delete char_args[i];
-        }
+        // for (int i = 0; i < args.size(); i++)
+        // {
+        //   delete char_args[i];
+        // }
         perror("smash error: execl failed");
         exit(1);
       }
-      for (int i = 0; i < args.size(); i++)
-      {
-        delete char_args[i];
-      }
+      // for (int i = 0; i < args.size(); i++)
+      // {
+      //   delete char_args[i];
+      // }
     }
   }
   else // father
