@@ -662,11 +662,11 @@ void ExternalCommand::execute()
     this->pid = temp_pid;
     if (_isBackgroundComamnd(cmd_str))
     {
-      SmallShell::getInstance().getJobs().addJob(std::make_shared<ExternalCommand>(this), false);
+      SmallShell::getInstance().getJobs().addJob(shared_from_this(), false);
     }
     else
     {
-      SmallShell::getInstance().setCurrentCmd(std::make_shared<ExternalCommand>(this));
+      SmallShell::getInstance().setCurrentCmd(shared_from_this());
       waitpid(temp_pid, NULL, WUNTRACED);
       SmallShell::getInstance().setCurrentCmd();
       // delete this;

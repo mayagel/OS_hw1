@@ -17,7 +17,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-class Command
+class Command : public std::enable_shared_from_this<Command>
 {
 protected:
   std::string cmd_str; // without changes
