@@ -57,22 +57,22 @@ string _trim(const std::string &s) // use this to delete whitespaces from comman
   return _rtrim(_ltrim(s));
 }
 
-int _parseCommandLine(const char *cmd_line, char **args) // slpit the commandline to list of strs
-{
-  FUNC_ENTRY()
-  int i = 0;
-  std::istringstream iss(_trim(string(cmd_line)).c_str());
-  for (std::string s; iss >> s;)
-  {
-    args[i] = (char *)malloc(s.length() + 1);
-    memset(args[i], 0, s.length() + 1);
-    strcpy(args[i], s.c_str());
-    args[++i] = NULL;
-  }
-  return i;
+// int _parseCommandLine(const char *cmd_line, char **args) // slpit the commandline to list of strs
+// {
+//   FUNC_ENTRY()
+//   int i = 0;
+//   std::istringstream iss(_trim(string(cmd_line)).c_str());
+//   for (std::string s; iss >> s;)
+//   {
+//     args[i] = (char *)malloc(s.length() + 1);
+//     memset(args[i], 0, s.length() + 1);
+//     strcpy(args[i], s.c_str());
+//     args[++i] = NULL;
+//   }
+//   return i;
 
-  FUNC_EXIT()
-}
+//   FUNC_EXIT()
+// }
 
 int _parseCommandLine(string cmd_line, vector<string> &args) // slpit the commandline to list of strs
 {
@@ -581,7 +581,7 @@ void QuitCommand::execute()
     SmallShell::getInstance().getJobs().killprintJobsList();
     SmallShell::getInstance().getJobs().killAllJobs(false);
   }
-  SmallShell::getInstance().~SmallShell();
+  // SmallShell::getInstance().~SmallShell();
   exit(0);
 }
 
