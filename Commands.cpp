@@ -285,19 +285,21 @@ void SmallShell::executeCommand(const char *cmd_line)
     std::shared_ptr<Command> cmd = CreateCommand(cmd_line);
     if (cmd)
       cmd->execute();
-    try
-    {
-      if (typeid(cmd) == typeid(std::shared_ptr<QuitCommand>))
-      {
-        cmd->~Command();
-      }
-    }
-    catch (const std::exception &e)
-    {
-      cout << "error with delete quit" << endl; // delete this
-    }
+    //   try
+    //   {
+    //     if (typeid(cmd) == typeid(std::shared_ptr<QuitCommand>))
+    //     {
+    //       cmd->~Command();
+    //     }
+    //   }
+    //   catch (const std::exception &e)
+    //   {
+    //     cout << "error with delete quit" << endl; // delete this
+    //   }
 
-    // shared_ptr<QuitCommand> tmp_cmd = dynamic_cast<shared_ptr<QuitCommand>>(cmd);
+    //   // shared_ptr<QuitCommand> tmp_cmd = dynamic_cast<shared_ptr<QuitCommand>>(cmd);
+    //   // delete tmp_cmd;
+    // BuiltInstd::shared_ptr<Command>tmp_cmd = dynamic_cast<BuiltInstd::shared_ptr<Command>>(cmd);
     // delete tmp_cmd;
   }
   catch (CommandException &e)
