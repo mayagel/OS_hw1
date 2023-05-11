@@ -596,7 +596,7 @@ void QuitCommand::execute()
   }
 
   // SmallShell::getInstance().~SmallShell();
-  // exit(0);
+  exit(0);
 }
 
 void KillCommand::execute()
