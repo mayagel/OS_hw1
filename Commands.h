@@ -340,7 +340,7 @@ private:
 public:
   DefaultError(const string &cmd) : cmd_line(cmd)
   {
-    cerr << "smash error: " << cmd_line << endl;
+    cerr << "smash error:>" << cmd_line << endl;
   }
 };
 
