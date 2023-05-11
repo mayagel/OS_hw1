@@ -467,7 +467,7 @@ GetFileTypeCommand::GetFileTypeCommand(const string cmd_line, vector<string> arg
 {
   if (args.size() != 2)
   {
-    throw InvalidArguments(cmd_line);
+    throw InvalidArguments(args[0]);
   }
 }
 
@@ -476,7 +476,7 @@ ChmodCommand::ChmodCommand(string cmd_line, vector<string> args, pid_t pid) : Bu
   // check input validity
   if (args.size() != 3)
   {
-    throw InvalidArguments(cmd_line);
+    throw InvalidArguments(args[0]);
   }
 
   // Parse the new mode from the command line arguments
@@ -486,14 +486,14 @@ ChmodCommand::ChmodCommand(string cmd_line, vector<string> args, pid_t pid) : Bu
   // Check that the new mode was valid
   if (*endptr != '\0' || errno == ERANGE)
   {
-    throw InvalidArguments(cmd_line);
+    throw InvalidArguments(args[0]);
   }
 
   struct stat file_stat;
   // Retrieve the current file mode of the file
   if (stat(args[2].c_str(), &file_stat) == -1)
   {
-    throw InvalidArguments(cmd_line);
+    throw InvalidArguments(args[0]);
   }
 }
 
