@@ -612,7 +612,8 @@ void KillCommand::execute()
   }
   else
   {
-    SmallShell::getInstance().getJobs().printJobsList();
+    //
+    // SmallShell::getInstance().getJobs().printJobsList();
     cout << "signal number " << signal_num << " was sent to pid " << pid_to_kill << endl;
   }
 }
