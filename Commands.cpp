@@ -185,7 +185,7 @@ CMD_TYPE commandType(string line, int &index)
 /**
  * Creates and returns a pointer to Command class which matches the given command line (cmd_line)
  */
-Command *SmallShell::CreateCommand(const char *cmd_line)
+std::shared_ptr<Command> SmallShell::CreateCommand(const char *cmd_line)
 {
   if (!cmd_line || strcmp(cmd_line, "") == 0)
     return nullptr;
@@ -197,7 +197,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   {
     args.push_back(org_cmd.substr(0, index));
     args.push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
-    return new RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
+    return std::shared_ptr < RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
   }
 
   if (cmd_type == PIPE || cmd_type == PIPE_ERR)
@@ -221,51 +221,51 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   }
   if (args[0] == "chprompt")
   {
-    return new chpromptCommand(org_cmd, args);
+    return std::make_shared<chpromptCommand>(chpromptCommand(org_cmd, args));
   }
   else if (args[0] == "showpid")
   {
-    return new ShowPidCommand(org_cmd, args);
+    return std::make_shared<ShowPidCommand>(ShowPidCommand(org_cmd, args));
   }
   else if (args[0] == "pwd")
   {
-    return new GetCurrDirCommand(org_cmd, args);
+    return std::make_shared<GetCurrDirCommand>(GetCurrDirCommand(org_cmd, args));
   }
   else if (args[0] == "cd")
   {
-    return new ChangeDirCommand(org_cmd, args);
+    return std::make_shared<ChangeDirCommand>(ChangeDirCommand(org_cmd, args));
   }
   else if (args[0] == "jobs")
   {
-    return new JobsCommand(org_cmd, args);
+    return std::make_shared<JobsCommand>(JobsCommand(org_cmd, args));
   }
   else if (args[0] == "fg")
   {
-    return new ForegroundCommand(org_cmd, args);
+    return std::make_shared<ForegroundCommand>(ForegroundCommand(org_cmd, args));
   }
   else if (args[0] == "bg")
   {
-    return new BackgroundCommand(org_cmd, args);
+    return std::make_shared<BackgroundCommand>(BackgroundCommand(org_cmd, args));
   }
   else if (args[0] == "quit")
   {
-    return new QuitCommand(org_cmd, args);
+    return std::make_shared<QuitCommand>(QuitCommand(org_cmd, args));
   }
   else if (args[0] == "kill")
   {
-    return new KillCommand(org_cmd, args);
+    return std::make_shared<KillCommand>(KillCommand(org_cmd, args));
   }
   else if (args[0] == "setcore")
   {
-    return new SetcoreCommand(org_cmd, args);
+    return std::make_shared<SetcoreCommand>(SetcoreCommand(org_cmd, args));
   }
   else if (args[0] == "getfileinfo")
   {
-    return new GetFileTypeCommand(org_cmd, args);
+    return std::make_shared<GetFileTypeCommand>(GetFileTypeCommand(org_cmd, args));
   }
   else if (args[0] == "chmod")
   {
-    return new ChmodCommand(org_cmd, args);
+    return std::make_shared<ChmodCommand>(ChmodCommand(org_cmd, args));
   }
   else if (args[0] == "timeout")
   {
@@ -273,7 +273,7 @@ Command *SmallShell::CreateCommand(const char *cmd_line)
   else
   {
     // external commands
-    return new ExternalCommand(org_cmd, args);
+    return std::make_shared<ExternalCommand>(org_cmd, args);
   }
   // return nullptr;
 }
@@ -282,12 +282,12 @@ void SmallShell::executeCommand(const char *cmd_line)
 {
   try
   {
-    Command *cmd = CreateCommand(cmd_line);
+    std::shared_ptr<Command> cmd = CreateCommand(cmd_line);
     if (cmd)
       cmd->execute();
 
-    BuiltInCommand *tmp_cmd = dynamic_cast<BuiltInCommand *>(cmd);
-    delete tmp_cmd;
+    // BuiltInstd::shared_ptr<Command>tmp_cmd = dynamic_cast<BuiltInstd::shared_ptr<Command>>(cmd);
+    // delete tmp_cmd;
   }
   catch (CommandException &e)
   {
@@ -479,11 +479,11 @@ ChmodCommand::ChmodCommand(string cmd_line, vector<string> args, pid_t pid) : Bu
     throw InvalidArguments(args[0]);
   }
 
-  // Parse the new mode from the command line arguments
+  // Parse the std::shared_ptr<mode from the command line arguments
   char *endptr;
   long new_mode = strtol(args[1].c_str(), &endptr, 8);
 
-  // Check that the new mode was valid
+  // Check that the std::shared_ptr<mode was valid
   if (*endptr != '\0' || errno == ERANGE)
   {
     throw InvalidArguments(args[0]);
@@ -540,7 +540,7 @@ void ForegroundCommand::execute()
   if (args.size() > 2)
     throw InvalidArguments(args[0]);
 
-  Command *cmd = SmallShell::getInstance().getJobs().getJobById(job_to_fg)->getCmd();
+  std::shared_ptr<Command> cmd = SmallShell::getInstance().getJobs().getJobById(job_to_fg)->getCmd();
   if (the_job->isStopped())
   {
     // the_job->setStopped(false);
@@ -638,7 +638,7 @@ void ExternalCommand::execute()
       for (auto &arg : args)
       {
         char_args.push_back((char *)arg.c_str());
-        // char_args[i] = new char[args[i].length() + 1];
+        // char_args[i] = std::shared_ptr<char[args[i].length() + 1];
         // strcpy(char_args[i], args[i].c_str());
       }
       char_args.push_back(NULL);
@@ -697,7 +697,7 @@ void RedirectionCommand::execute()
   }
   try
   {
-    Command *cmd = SmallShell::getInstance().CreateCommand(args[0].c_str());
+    std::shared_ptr<Command> cmd = SmallShell::getInstance().CreateCommand(args[0].c_str());
     if (!cmd)
     {
       dup2(stdout_copy, STDOUT_FILENO);
@@ -751,7 +751,7 @@ void PipeCommand::execute()
   {
     close(fd[0]);
     pipe_err ? dup2(fd[1], STDERR_FILENO) : dup2(fd[1], STDOUT_FILENO);
-    Command *cmd1 = SmallShell::getInstance().CreateCommand(args[0].c_str());
+    std::shared_ptr<Command> cmd1 = SmallShell::getInstance().CreateCommand(args[0].c_str());
     if (!cmd1)
     {
       close(fd[1]);
@@ -783,7 +783,7 @@ void PipeCommand::execute()
     {
       close(fd[1]);
       dup2(fd[0], STDIN_FILENO);
-      Command *cmd2 = SmallShell::getInstance().CreateCommand(args[1].c_str());
+      std::shared_ptr<Command> cmd2 = SmallShell::getInstance().CreateCommand(args[1].c_str());
       if (!cmd2)
       {
         close(fd[0]);
@@ -985,7 +985,7 @@ JobsList::JobEntry *JobsList::getLastJob(int *jobId)
   return &jbs_map.rbegin()->second;
 }
 
-void JobsList::addJob(Command *cmd, bool isStopped)
+void JobsList::addJob(std::shared_ptr<Command> cmd, bool isStopped)
 {
   removeFinishedJobs();
   if (cmd->getJobId() != -1)
@@ -1008,7 +1008,7 @@ void JobsList::addJob(Command *cmd, bool isStopped)
   // jbs_map.insert({job.getPid(), job});
 }
 
-JobsList::JobEntry::JobEntry(int id, bool isStopped, Command *cmd) : job_id(id), is_stopped(isStopped), cmd(cmd)
+JobsList::JobEntry::JobEntry(int id, bool isStopped, std::shared_ptr<Command> cmd) : job_id(id), is_stopped(isStopped), cmd(cmd)
 {
   // this->pid = cmd->getPid();
   this->start_time = time(NULL);

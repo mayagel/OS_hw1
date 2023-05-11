@@ -7,7 +7,7 @@ using namespace std;
 
 void ctrlZHandler(int sig_num)
 {
-  Command *curr_cmd = SmallShell::getInstance().getCurrentCmd();
+  std::shared_ptr<Command> curr_cmd = SmallShell::getInstance().getCurrentCmd();
   if (curr_cmd)
   {
     kill(curr_cmd->getPid(), SIGSTOP);
@@ -22,7 +22,7 @@ void ctrlZHandler(int sig_num)
 void ctrlCHandler(int sig_num)
 {
   cout << "smash: got ctrl-C" << endl;
-  Command *curr_cmd = SmallShell::getInstance().getCurrentCmd();
+  std::shared_ptr<Command> curr_cmd = SmallShell::getInstance().getCurrentCmd();
   if (curr_cmd)
   {
     kill(curr_cmd->getPid(), SIGINT);

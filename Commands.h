@@ -150,16 +150,16 @@ public:
     // int _job_id;
     bool is_stopped;
     time_t start_time;
-    Command *cmd;
+    std::shared_ptr<Command> cmd;
     int job_id;
 
   public:
-    JobEntry(int job_id, bool is_stopped, Command *cmd);
+    JobEntry(int job_id, bool is_stopped, std::shared_ptr<Command> cmd);
     // int getJobId() const { return _job_id; }
     pid_t getPid() const { return cmd->getPid(); }
     string getCommand() const { return cmd->getCmdStr(); }
-    Command *getCmd() { return cmd; }
-    void setCmd(Command *cmd) { cmd = cmd; }
+    std::shared_ptr<Command> getCmd() { return cmd; }
+    void setCmd(std::shared_ptr<Command> cmd) { cmd = cmd; }
     bool isStopped() const { return is_stopped; }
     void setStopped(bool new_is_stopped) { is_stopped = new_is_stopped; }
     time_t getStartTime() const { return start_time; }
@@ -169,7 +169,7 @@ public:
 public:
   JobsList();
   ~JobsList() = default;
-  void addJob(Command *cmd, bool isStopped = false);
+  void addJob(std::shared_ptr<Command> cmd, bool isStopped = false);
   void printJobsList();
   void killAllJobs(bool print = true);
   void removeFinishedJobs();
@@ -270,14 +270,14 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
-  Command *curr_cmd;
+  std::shared_ptr<Command> curr_cmd;
   std::string smash_name;
   JobsList jobs_list;
   string last_wd;
   SmallShell();
 
 public:
-  Command *CreateCommand(const char *cmd_line);
+  std::shared_ptr<Command> CreateCommand(const char *cmd_line);
   void printJobs();
   JobsList &getJobs() { return jobs_list; }
   pid_t getPidSmash() { return getpid(); };
@@ -297,8 +297,8 @@ public:
   };
   ~SmallShell();
   void executeCommand(const char *cmd_line);
-  void setCurrentCmd(Command *cmd = nullptr) { curr_cmd = cmd; };
-  Command *getCurrentCmd() { return curr_cmd; };
+  void setCurrentCmd(std::shared_ptr<Command> cmd = nullptr) { curr_cmd = cmd; };
+  std::shared_ptr<Command> getCurrentCmd() { return curr_cmd; };
   void removeJobById(int jobId);
   // TODO: add extra methods as needed
   string getLastWd() { return last_wd; };
