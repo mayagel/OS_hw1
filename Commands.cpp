@@ -440,27 +440,26 @@ ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid
 
 SetcoreCommand::SetcoreCommand(const string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  cout << "in SetcoreCommand command" << endl;
-  if (args.size() != 3)
+
+  try
   {
-    // cout << "smash error: setcore: invalid arguments" << endl;
-    // return;
-    throw InvalidArguments(cmd_line);
+    job_to_setcore = stoi(args[1]);
+    core_num = stoi(args[2]);
   }
-  job_to_setcore = stoi(args[1]);
-  core_num = stoi(args[2]);
-  cout << "job to setcore is: " << job_to_setcore << endl;
-  cout << "core num is: " << core_num << endl;
-  cout << SmallShell::getInstance().getJobs().getJobById(job_to_setcore)->getPid() << endl;
+  catch (const std::exception &e)
+  {
+    throw InvalidArguments(args[0]);
+  }
+
   int max_core = std::thread::hardware_concurrency();
-  cout << "max core is: " << max_core << endl;
-  if (core_num < 0 || core_num > max_core)
-  {
-    throw InvalidCoreNumber(cmd_line);
-  }
+
   if (SmallShell::getInstance().getJobs().getJobById(job_to_setcore) == nullptr)
   {
-    throw JobDoesNotExist(cmd_line, job_to_setcore);
+    throw JobDoesNotExist(args[0], job_to_setcore);
+  }
+  if (core_num < 0 || core_num > max_core)
+  {
+    throw InvalidCoreNumber(args[0]);
   }
 }
 
@@ -784,8 +783,15 @@ void SetcoreCommand::execute()
   CPU_ZERO(&set);
   CPU_SET(core_num, &set);
   JobsList::JobEntry *job_ent = SmallShell::getInstance().getJobs().getJobById(job_to_setcore);
-  cout << "the pid is: " << job_ent->getPid() << endl;
-  // cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+  if (!job_ent)
+  {
+    throw JobDoesNotExist(args[0], job_to_setcore);
+  }
+  if (args.size() != 3)
+  {
+    throw InvalidArguments(args[0]);
+  }
+
   if (sched_setaffinity(job_ent->getPid(), sizeof(set), &set) == -1)
   {
     perror("smash error: sched_setaffinity failed");
