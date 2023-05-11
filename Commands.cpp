@@ -197,14 +197,14 @@ std::shared_ptr<Command> SmallShell::CreateCommand(const char *cmd_line)
   {
     args.push_back(org_cmd.substr(0, index));
     args.push_back(org_cmd.substr(index + 1 + (cmd_type == REDIRECTION_APPEND), org_cmd.length()));
-    return std::shared_ptr < RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args);
+    return std::make_shared<RedirectionCommand>(RedirectionCommand(org_cmd, cmd_type == REDIRECTION_APPEND, args));
   }
 
   if (cmd_type == PIPE || cmd_type == PIPE_ERR)
   {
     args.push_back(org_cmd.substr(0, index));
     args.push_back(org_cmd.substr(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length()));
-    return new PipeCommand(org_cmd, cmd_type == PIPE_ERR, args);
+    return std::make_shared<PipeCommand>(PipeCommand(org_cmd, cmd_type == PIPE_ERR, args));
   }
 
   if (!_parseCommandLine(org_cmd, args))
@@ -662,11 +662,11 @@ void ExternalCommand::execute()
     this->pid = temp_pid;
     if (_isBackgroundComamnd(cmd_str))
     {
-      SmallShell::getInstance().getJobs().addJob(this, false);
+      SmallShell::getInstance().getJobs().addJob(std::shared_ptr<ExternalCommand>(this), false);
     }
     else
     {
-      SmallShell::getInstance().setCurrentCmd(this);
+      SmallShell::getInstance().setCurrentCmd(std::shared_ptr<ExternalCommand>(this));
       waitpid(temp_pid, NULL, WUNTRACED);
       SmallShell::getInstance().setCurrentCmd();
       // delete this;
@@ -705,7 +705,7 @@ void RedirectionCommand::execute()
       throw InvalidArguments(args[0]);
     }
     cmd->execute();
-    delete cmd;
+    // delete cmd;
   }
   catch (CommandException &e)
   {
@@ -761,7 +761,7 @@ void PipeCommand::execute()
       throw InvalidArguments(args[0]);
     }
     cmd1->execute();
-    delete cmd1;
+    // delete cmd1;
     pipe_err ? dup2(err_copy, STDERR_FILENO) : dup2(out_copy, STDOUT_FILENO);
     // close(fd[1]); //is it ok to close here?
     exit(0);
@@ -793,7 +793,7 @@ void PipeCommand::execute()
         throw InvalidArguments(args[1]);
       }
       cmd2->execute();
-      delete cmd2;
+      // delete cmd2;
       dup2(in_copy, STDIN_FILENO);
       // close(fd[0]); //is it ok to close here?
       exit(0);
@@ -920,7 +920,7 @@ void JobsList::removeFinishedJobs()
     }
     else
     {
-      delete it->second.getCmd();
+      // delete it->second.getCmd();
       it = jbs_map.erase(it);
     }
   }
