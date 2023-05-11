@@ -285,8 +285,19 @@ void SmallShell::executeCommand(const char *cmd_line)
     std::shared_ptr<Command> cmd = CreateCommand(cmd_line);
     if (cmd)
       cmd->execute();
+    try
+    {
+      if (typeid(cmd) == typeid(std::shared_ptr<QuitCommand>))
+      {
+        cmd->~Command();
+      }
+    }
+    catch (const std::exception &e)
+    {
+      cout << "error with delete quit" << endl; // delete this
+    }
 
-    // BuiltInstd::shared_ptr<Command>tmp_cmd = dynamic_cast<BuiltInstd::shared_ptr<Command>>(cmd);
+    // shared_ptr<QuitCommand> tmp_cmd = dynamic_cast<shared_ptr<QuitCommand>>(cmd);
     // delete tmp_cmd;
   }
   catch (CommandException &e)
@@ -581,7 +592,7 @@ void QuitCommand::execute()
     SmallShell::getInstance().getJobs().killprintJobsList();
     SmallShell::getInstance().getJobs().killAllJobs(false);
   }
-  this->~QuitCommand();
+
   // SmallShell::getInstance().~SmallShell();
   // exit(0);
 }
