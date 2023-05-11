@@ -145,7 +145,7 @@ void _removeBackgroundSign(string &cmd_line)
 
 /************** !!!!SmallShell implements!!!! ******************/
 
-SmallShell::SmallShell() : smash_name("smash"), jobs_list(), last_wd(""), curr_cmd(nullptr)
+SmallShell::SmallShell() : last_wd(""), curr_cmd(nullptr), smash_name("smash"), jobs_list()
 {
   // cout << "smash: " << smash_name << "> " << endl;
 }
@@ -481,7 +481,7 @@ ChmodCommand::ChmodCommand(string cmd_line, vector<string> args, pid_t pid) : Bu
 
   // Parse the std::shared_ptr<mode from the command line arguments
   char *endptr;
-  long new_mode = strtol(args[1].c_str(), &endptr, 8);
+  strtol(args[1].c_str(), &endptr, 8);
 
   // Check that the std::shared_ptr<mode was valid
   if (*endptr != '\0' || errno == ERANGE)
@@ -929,27 +929,28 @@ void JobsList::removeFinishedJobs()
 void JobsList::printJobsList()
 {
   removeFinishedJobs();
-  for (auto &[key, job] : jbs_map)
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
     time_t now = time(NULL);
     // int seconds = difftime(now, job.getStartTime());
-    cout << "[" << key << "] " << job.getCommand() << " : " << job.getPid() << " " << int(difftime(now, job.getStartTime())) << " secs";
-    if (job.isStopped())
+    cout << "[" << it->first << "] " << it->second.getCommand() << " : " << it->second.getPid() << " " << int(difftime(now, it->second.getStartTime())) << " secs";
+    if (it->second.isStopped())
     {
       cout << " (stopped)";
     }
     cout << endl;
+    it++;
   }
 }
 
 void JobsList::killprintJobsList()
 {
   removeFinishedJobs();
-  for (auto &[key, job] : jbs_map)
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
     time_t now = time(NULL);
-    // int seconds = difftime(now, job.getStartTime());
-    cout << job.getPid() << ": " << job.getCommand() << endl;
+    cout << it->second.getPid() << ": " << it->second.getCommand() << endl;
+    it++;
   }
 }
 
@@ -963,13 +964,14 @@ JobsList::JobsList() : jbs_map()
 JobsList::JobEntry *JobsList::getLastStoppedJob(int *jobId)
 {
   JobEntry *res = nullptr;
-  for (auto &[key, job] : jbs_map)
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
-    if (job.isStopped())
+    if (it->second.isStopped())
     {
-      *jobId = key;
-      res = &job;
+      *jobId = it->first;
+      res = &it->second;
     }
+    it++;
   }
   return res;
 }
@@ -994,12 +996,13 @@ void JobsList::addJob(std::shared_ptr<Command> cmd, bool isStopped)
     return;
   }
   int max_id = 0;
-  for (auto &[key, job] : jbs_map)
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
-    if (key > max_id)
+    if (it->first > max_id)
     {
-      max_id = key;
+      max_id = it->first;
     }
+    it++;
   }
   // JobEntry job(max_id, isStopped, cmd);
   cmd->setJobId(max_id + 1);
@@ -1031,15 +1034,16 @@ void JobsList::removeJobById(int jobId)
 
 void JobsList::killAllJobs(bool print)
 {
-  for (auto &[key, job] : jbs_map)
+  for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
-    if (kill(job.getPid(), SIGKILL) == -1)
+    if (kill(it->second.getPid(), SIGKILL) == -1)
     {
       perror("smash error: kill failed");
     }
     else if (print)
     {
-      cout << "signal number " << SIGKILL << " was sent to pid " << job.getPid() << endl;
+      cout << "signal number " << SIGKILL << " was sent to pid " << it->second.getPid() << endl;
     }
+    it++;
   }
 }

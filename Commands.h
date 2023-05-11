@@ -59,7 +59,7 @@ class PipeCommand : public Command
   // TODO: Add your data members
 public:
   // PipeCommand(const char *cmd_line);
-  explicit PipeCommand(const string cmd_line, bool pipe_err, vector<string> args, pid_t pid = -1) : pipe_err(pipe_err), Command(cmd_line, args, pid){};
+  explicit PipeCommand(const string cmd_line, bool pipe_err, vector<string> args, pid_t pid = -1) : Command(cmd_line, args, pid), pipe_err(pipe_err){};
   virtual ~PipeCommand() {}
   void execute() override;
 };
@@ -73,11 +73,11 @@ class RedirectionCommand : public Command
 
 public:
   // explicit RedirectionCommand(const char *cmd_line);
-  explicit RedirectionCommand(const string cmd_line, bool append, vector<string> args, pid_t pid = -1) : append(append), Command(cmd_line, args, pid){
-                                                                                                                             // cmd_lft = cmd_line.substr(0, cmd_line.find_first_of(">")); // delete &?
-                                                                                                                             // file_name = args.back();                                   // cmd_line.substr(cmd_line.find_first_of(">") + 1 + append, cmd_line.size());
-                                                                                                                             // args.pop_back();
-                                                                                                                         };
+  explicit RedirectionCommand(const string cmd_line, bool append, vector<string> args, pid_t pid = -1) : Command(cmd_line, args, pid), append(append){
+                                                                                                                                           // cmd_lft = cmd_line.substr(0, cmd_line.find_first_of(">")); // delete &?
+                                                                                                                                           // file_name = args.back();                                   // cmd_line.substr(cmd_line.find_first_of(">") + 1 + append, cmd_line.size());
+                                                                                                                                           // args.pop_back();
+                                                                                                                                       };
   virtual ~RedirectionCommand() {}
   void execute() override;
   // void prepare() override;
@@ -271,10 +271,10 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
+  string last_wd;
   std::shared_ptr<Command> curr_cmd;
   std::string smash_name;
   JobsList jobs_list;
-  string last_wd;
   SmallShell();
 
 public:
