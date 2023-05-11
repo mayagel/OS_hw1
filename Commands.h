@@ -271,10 +271,11 @@ class SmallShell
 {
 private:
   // TODO: Add your data members
-  string last_wd;
-  std::shared_ptr<Command> curr_cmd;
   std::string smash_name;
   JobsList jobs_list;
+  string last_wd;
+  std::shared_ptr<Command> curr_cmd;
+
   SmallShell();
 
 public:
