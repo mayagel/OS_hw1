@@ -418,7 +418,7 @@ QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  if (args.size() == 3)
+  if (args.size() >= 3)
   {
     try
     {
@@ -427,10 +427,11 @@ KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
     }
     catch (const std::exception &e)
     {
-
       throw InvalidArguments(args[0]);
     }
   }
+  else
+    throw InvalidArguments(args[0]);
 }
 
 ExternalCommand::ExternalCommand(string cmd_line, vector<string> args, pid_t pid) : Command(cmd_line, args, pid)
