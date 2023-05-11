@@ -576,7 +576,7 @@ void QuitCommand::execute()
   SmallShell::getInstance().getJobs().removeFinishedJobs();
   if (args.size() > 1 && args[1] == "kill")
   {
-    cout << "smash: sending SIGKILL signal to " << SmallShell::getInstance().getJobs().jbs_map.size() << " jobs: " << endl;
+    cout << "smash: sending SIGKILL signal to " << SmallShell::getInstance().getJobs().jbs_map.size() << " jobs:" << endl;
     // print jobs to kill
     SmallShell::getInstance().getJobs().killprintJobsList();
     SmallShell::getInstance().getJobs().killAllJobs(false);
