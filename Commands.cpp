@@ -275,7 +275,7 @@ std::shared_ptr<Command> SmallShell::CreateCommand(const char *cmd_line)
     // external commands
     return std::make_shared<ExternalCommand>(org_cmd, args);
   }
-  // return nullptr;
+  return nullptr;
 }
 
 void SmallShell::executeCommand(const char *cmd_line)
@@ -948,7 +948,7 @@ void JobsList::killprintJobsList()
   removeFinishedJobs();
   for (auto it = jbs_map.begin(); it != jbs_map.end();)
   {
-    time_t now = time(NULL);
+    // time_t now = time(NULL);
     cout << it->second.getPid() << ": " << it->second.getCommand() << endl;
     it++;
   }

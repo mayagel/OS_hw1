@@ -149,10 +149,10 @@ public:
   {
     // TODO: Add your data members
     // int _job_id;
+    int job_id;
     bool is_stopped;
     time_t start_time;
     std::shared_ptr<Command> cmd;
-    int job_id;
 
   public:
     JobEntry(int job_id, bool is_stopped, std::shared_ptr<Command> cmd);
