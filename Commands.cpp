@@ -145,7 +145,7 @@ void _removeBackgroundSign(string &cmd_line)
 
 /************** !!!!SmallShell implements!!!! ******************/
 
-SmallShell::SmallShell() : smash_name("smash"), jobs_list(), last_wd(""), curr_cmd(nullptr)
+SmallShell::SmallShell() : curr_cmd(nullptr), smash_name("smash"), jobs_list(), last_wd("")
 {
   // cout << "smash: " << smash_name << "> " << endl;
 }
