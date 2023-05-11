@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
+#include <memory>
 
 #define COMMAND_ARGS_MAX_LENGTH (200)
 #define COMMAND_MAX_ARGS (20)
