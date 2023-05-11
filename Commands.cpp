@@ -543,7 +543,7 @@ void QuitCommand::execute()
   SmallShell::getInstance().getJobs().removeFinishedJobs();
   if (args.size() > 1 && args[1] == "kill")
   {
-    cout << "sending SIGKILL signal to " << SmallShell::getInstance().getJobs().jbs_map.size() << "jobs" << endl;
+    cout << "sending SIGKILL signal to " << SmallShell::getInstance().getJobs().jbs_map.size() << " jobs" << endl;
     // print jobs to kill
     SmallShell::getInstance().getJobs().killprintJobsList();
     SmallShell::getInstance().getJobs().killAllJobs(false);
@@ -905,10 +905,8 @@ void JobsList::addJob(Command *cmd, bool isStopped)
     }
   }
   // JobEntry job(max_id, isStopped, cmd);
-  cout << "max id is: " << max_id << endl;
   cmd->setJobId(max_id + 1);
   jbs_map.insert({max_id + 1, JobEntry(max_id, isStopped, cmd)});
-  cout << "map size is: " << jbs_map.size() << endl;
   // JobEntry job(cmd, isStopped);
   // jbs_map.insert({job.getPid(), job});
 }
