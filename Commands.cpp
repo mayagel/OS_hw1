@@ -418,8 +418,16 @@ QuitCommand::QuitCommand(string cmd_line, vector<string> args, pid_t pid) : Buil
 
 KillCommand::KillCommand(string cmd_line, vector<string> args, pid_t pid) : BuiltInCommand(cmd_line, args, pid)
 {
-  signal_num = stoi(args[1].substr(1));
-  job_to_kill = stoi(args[2]);
+  try
+  {
+    signal_num = stoi(args[1].substr(1));
+    job_to_kill = stoi(args[2]);
+  }
+  catch (const std::exception &e)
+  {
+    throw InvalidArguments(args[0]);
+  }
+
   cout << "in KillCommand command" << endl;
 }
 
@@ -537,14 +545,23 @@ void QuitCommand::execute()
     SmallShell::getInstance().getJobs().killprintJobsList();
     SmallShell::getInstance().getJobs().killAllJobs(false);
   }
-  cout << "exit" << endl;
   exit(0);
 }
 
 void KillCommand::execute()
 {
   JobsList::JobEntry *job = SmallShell::getInstance().getJobs().getJobById(job_to_kill);
+  if (!job)
+  {
+    throw JobDoesNotExist(args[0], job_to_kill);
+  }
+  if (args.size() > 3)
+  {
+    throw InvalidArguments(args[0]);
+  }
+
   pid_t pid_to_kill = job->getPid();
+
   if (SIGCONT == signal_num)
   {
     job->setStopped(false);
