@@ -286,6 +286,7 @@ public:
   void operator=(SmallShell const &) = delete; // disable = operator
   static SmallShell &getInstance()             // make SmallShell singleton
   {
+    // std::cout << "in getInstance" << endl; // delete this
     static SmallShell instance; // Guaranteed to be destroyed.
     // Instantiated on first use.
     // instance.setPrompt();
