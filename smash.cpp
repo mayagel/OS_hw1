@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     {
         perror("smash error: failed to set ctrl-C handler\n");
     }
-    // std::cout << "after signals"; // delete this
+    // std::cout << "after signals";
     // TODO: setup sig alarm handler
 
     SmallShell &smash = SmallShell::getInstance();
