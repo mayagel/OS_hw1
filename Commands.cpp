@@ -362,7 +362,7 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     SmallShell::getInstance().getJobs().getLastJob(&res);
     if (res == -1)
     {
-      throw DefaultError("fg: jobs list is empty");
+      perror("smash error: fg: jobs list is empty");
     }
     // cout << "res is: " << res << endl;
     job_to_fg = res;
@@ -524,7 +524,8 @@ void ChangeDirCommand::execute()
   string temp = getcwd(NULL, 0);
   if (chdir(new_path.c_str()) == -1)
   {
-    throw DefaultError(cmd_str);
+    perror("smash error: chdir failed");
+    return;
   }
   SmallShell::getInstance().setLastWd(temp);
 }
