@@ -8,6 +8,7 @@ using namespace std;
 void ctrlZHandler(int sig_num)
 {
   std::shared_ptr<Command> curr_cmd = SmallShell::getInstance().getCurrentCmd();
+  cout << "smash: got ctrl-Z" << endl;
 
   if (curr_cmd)
   {
@@ -16,7 +17,6 @@ void ctrlZHandler(int sig_num)
     SmallShell::getInstance().getJobs().addJob(curr_cmd, true);
     cout << "smash: process " << int(curr_cmd->getPid()) << " was stopped" << endl;
   }
-  cout << "smash: got ctrl-Z" << endl;
   return;
 }
 
