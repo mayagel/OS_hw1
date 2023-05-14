@@ -13,6 +13,7 @@
 #include <thread>
 #include <sched.h>
 #include <sys/stat.h>
+#include <csignal>
 
 using namespace std;
 
@@ -614,6 +615,11 @@ void KillCommand::execute()
   {
     //
     // SmallShell::getInstance().getJobs().printJobsList();
+    if (signal_num == SIG_INT || signal_num == SIG_KILL)
+    {
+      SmallShell::getInstance().getJobs().removeJobById(job_to_kill)
+    }
+
     cout << "signal number " << signal_num << " was sent to pid " << pid_to_kill << endl;
   }
 }
