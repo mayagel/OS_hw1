@@ -205,7 +205,7 @@ std::shared_ptr<Command> SmallShell::CreateCommand(const char *cmd_line)
   if (cmd_type == PIPE || cmd_type == PIPE_ERR)
   {
     args.push_back(org_cmd.substr(0, index));
-    args.push_back(_trim(string(org_cmd.substr(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length()))).c_str());
+    args.push_back(_trim(string(org_cmd.substr(index + 1 + (cmd_type == PIPE_ERR), org_cmd.length()))));
     return std::make_shared<PipeCommand>(PipeCommand(org_cmd, cmd_type == PIPE_ERR, args));
   }
 
