@@ -8,9 +8,7 @@ using namespace std;
 void ctrlZHandler(int sig_num)
 {
   cout << "smash: got ctrl-Z" << endl;
-
   std::shared_ptr<Command> curr_cmd = SmallShell::getInstance().getCurrentCmd();
-
   if (curr_cmd)
   {
     kill(curr_cmd->getPid(), SIGSTOP);
