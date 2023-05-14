@@ -615,7 +615,7 @@ void KillCommand::execute()
   {
     //
     // SmallShell::getInstance().getJobs().printJobsList();
-    if (signal_num == SIG_INT || signal_num == SIG_KILL)
+    if (signal_num == SIGINT || signal_num == SIGKILL)
     {
       SmallShell::getInstance().getJobs().removeJobById(job_to_kill)
     }
