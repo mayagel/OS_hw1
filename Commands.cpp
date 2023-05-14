@@ -617,7 +617,7 @@ void KillCommand::execute()
     // SmallShell::getInstance().getJobs().printJobsList();
     if (signal_num == SIGINT || signal_num == SIGKILL)
     {
-      SmallShell::getInstance().getJobs().removeJobById(job_to_kill)
+      SmallShell::getInstance().getJobs().removeJobById(job_to_kill);
     }
 
     cout << "signal number " << signal_num << " was sent to pid " << pid_to_kill << endl;
