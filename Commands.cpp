@@ -362,7 +362,7 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     {
       throw DefaultError("fg: jobs list is empty");
     }
-    cout << "res is: " << res << endl;
+    // cout << "res is: " << res << endl;
     job_to_fg = res;
   }
   else
