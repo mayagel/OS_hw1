@@ -651,7 +651,7 @@ void ExternalCommand::execute()
         // strcpy(char_args[i], args[i].c_str());
       }
       char_args.push_back(NULL);
-      if (execvp(args[0].c_str(), const_cast<char *const *>(char_args.data())) == -1) // i think its shoulnd be execvp (maybe execv)
+      if (execvp(args[0].c_str(), char_args.data()) == -1) // i think its shoulnd be execvp (maybe execv)
       {
         // for (int i = 0; i < args.size(); i++)
         // {
@@ -847,7 +847,7 @@ void GetFileTypeCommand::execute()
   string path = args[1].c_str();
 
   struct stat file_info;
-  if (stat(path.c_str(), &file_info) == -1)
+  if (lstat(path.c_str(), &file_info) == -1)
   {
     throw InvalidArguments(cmd_str);
   }
