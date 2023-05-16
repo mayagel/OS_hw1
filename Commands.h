@@ -75,7 +75,7 @@ public:
   // explicit RedirectionCommand(const char *cmd_line);
   explicit RedirectionCommand(const string cmd_line, bool append, vector<string> args, pid_t pid = -1) : Command(cmd_line, args, pid), append(append){
                                                                                                                                            // cmd_lft = cmd_line.substr(0, cmd_line.find_first_of(">")); // delete &?
-                                                                                                                                           // file_name = args.back();                                   // cmd_line.substr(cmd_line.find_first_of(">") + 1 + append, cmd_line.size());
+                                                                                                                                           // file_name = args.back();                                   // cmd_line.substr(cmd_line.find_first_of(">") << 1 + append, cmd_line.size());
                                                                                                                                            // args.pop_back();
                                                                                                                                        };
   virtual ~RedirectionCommand() {}
@@ -315,17 +315,6 @@ public:
 class CommandException : public std::exception
 {
 };
-class TooManyArguments : public CommandException
-{
-private:
-  string cmd_line;
-
-public:
-  TooManyArguments(const string &cmd) : cmd_line(cmd)
-  {
-    cerr << "smash error: " << cmd_line << ": too many arguments" << endl;
-  }
-};
 
 class OldPwdNotSet : public CommandException
 {
@@ -338,7 +327,17 @@ public:
     cerr << "smash error: " << cmd_line << ": OLDPWD not set" << endl;
   }
 };
+class InvalidCoreNumber : public CommandException
+{
+private:
+  string _cmd_line;
 
+public:
+  InvalidCoreNumber(const string &cmd) : _cmd_line(cmd)
+  {
+    cerr << "smash error: " << _cmd_line << ": invalid core number" << endl;
+  }
+};
 class DefaultError : public CommandException
 {
 private:
@@ -359,7 +358,31 @@ private:
 public:
   JobsListIsEmpty(const string &cmd) : _cmd_line(cmd)
   {
-    cerr << "smash error: " + _cmd_line + ": jobs list is empty" << endl;
+    cerr << "smash error: " << _cmd_line << ": jobs list is empty" << endl;
+  }
+};
+
+class TooManyArguments : public CommandException
+{
+private:
+  string cmd_line;
+
+public:
+  TooManyArguments(const string &cmd) : cmd_line(cmd)
+  {
+    cerr << "smash error: " << cmd_line << ": too many arguments" << endl;
+  }
+};
+
+class NoStopedJobs : public CommandException
+{
+private:
+  string cmd_line;
+
+public:
+  NoStopedJobs(const string &cmd) : cmd_line(cmd)
+  {
+    cerr << "smash error: " << cmd_line << ": there is no stopped jobs to resume" << endl;
   }
 };
 
@@ -371,7 +394,7 @@ private:
 public:
   InvalidArguments(const string &cmd) : _cmd_line(cmd)
   {
-    cerr << "smash error: " + _cmd_line + ": invalid arguments" << endl;
+    cerr << "smash error: " << _cmd_line << ": invalid arguments" << endl;
   }
 };
 
@@ -397,31 +420,7 @@ private:
 public:
   AlreadyRunningInBackground(const string cmd, int job_id) : _cmd_line(cmd), _job_id(job_id)
   {
-    cerr << "smash error: " + _cmd_line + ": job-id " << _job_id << " is already running in the background" << endl;
-  }
-};
-
-class NoStopedJobs : public CommandException
-{
-private:
-  string cmd_line;
-
-public:
-  NoStopedJobs(const string &cmd) : cmd_line(cmd)
-  {
-    cerr << "smash error: " << cmd_line << ": there is no stopped jobs to resume" << endl;
-  }
-};
-
-class InvalidCoreNumber : public CommandException
-{
-private:
-  string _cmd_line;
-
-public:
-  InvalidCoreNumber(const string &cmd) : _cmd_line(cmd)
-  {
-    cerr << "smash error: " + _cmd_line + ": invalid core number" << endl;
+    cerr << "smash error: " << _cmd_line << ": job-id " << _job_id << " is already running in the background" << endl;
   }
 };
 
