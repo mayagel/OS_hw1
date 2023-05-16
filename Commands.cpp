@@ -651,7 +651,22 @@ void ExternalCommand::execute()
         // strcpy(char_args[i], args[i].c_str());
       }
       char_args.push_back(NULL);
-      if (execvp(args[0].c_str(), char_args.data()) == -1) // i think its shoulnd be execvp (maybe execv)
+      std::size_t totalLength = 0;
+      for (const char *str : char_args)
+      {
+        totalLength += std::strlen(str);
+      }
+
+      // Allocate memory for the concatenated string
+      char *concatenatedString = new char[totalLength + 1]; // +1 for the null terminator
+
+      // Concatenate the strings
+      concatenatedString[0] = '\0'; // Ensure the concatenated string is initially empty
+      for (const char *str : char_args)
+      {
+        std::strcat(concatenatedString, str);
+      }
+      if (execvp(args[0].c_str(), const_cast<char *const *>(char_args.data())) == -1) // i think its shoulnd be execvp (maybe execv)
       {
         // for (int i = 0; i < args.size(); i++)
         // {
