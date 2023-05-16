@@ -363,6 +363,7 @@ ForegroundCommand::ForegroundCommand(string cmd_line, vector<string> args, pid_t
     if (res == -1)
     {
       perror("smash error: fg: jobs list is empty");
+      return;
     }
     // cout << "res is: " << res << endl;
     job_to_fg = res;
