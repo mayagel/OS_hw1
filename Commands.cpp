@@ -651,7 +651,7 @@ void ExternalCommand::execute()
         // strcpy(char_args[i], args[i].c_str());
       }
       char_args.push_back(NULL);
-      if (execvp(args[0].c_str(), char_args.data()) == -1) // i think its shoulnd be execvp (maybe execv)
+      if (execv(args[0].c_str(), char_args.data()) == -1) // i think its shoulnd be execvp (maybe execv)
       {
         // for (int i = 0; i < args.size(); i++)
         // {
